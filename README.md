@@ -32,6 +32,9 @@ diff-spec/
 │   ├── scripts/                     # 分析/绘图脚本
 │   ├── baseline_attention/  head_attention_comparison/  l0_5l_diff_attention/
 │   ├── per_query_attention/ raw_data/  training_curve_comparisons/
+├── dspark_project/          # 训练代码与启动脚本（镜像容器 dspark_project/）
+│   ├── speculators/         #   训练/推理代码快照（含未提交 diff 改动，无 git 历史/旧分支）
+│   └── script/              #   各 run 启动脚本 *.sh（整目录镜像）
 └── logs/                    # 四类 run 的训练日志（>100MB 的按 50MB 分片）
     ├── l0_5l/
     ├── baseline/
@@ -90,3 +93,18 @@ cat logs/kfix/train_l0_5l_kfix_20260903_064547.log.* > train_l0_5l_kfix_20260903
   （`/home/y50063564/processed_data/archive_dspark_20260904/…` 及 `…/dspark_data/…`），
   clone 到别处重跑前需按本地实际路径调整。
 - 各实验结论速览见 `eval/README.md` 与 `diff_analysis/reports/DSPARK_DIFF_DEGENERATION_REPORT.md`。
+
+---
+
+## dspark_project/ —— 训练代码与启动脚本
+
+镜像自容器 `/home/y50063564/dspark_project/`，2026-09-04 快照。
+
+- **`speculators/`**：训练/推理代码（python 库 `src/speculators` + `scripts/` 等）。
+  **快照式并入**：已包含工作区中**未提交的 diff 改动**（`scripts/train.py`、
+  `src/speculators/models/dflash/attention.py / config.py / core.py / model_definitions.py` 等）
+  与未跟踪文件（如 `.github/workflows/`、`scripts/inspect_attn_layers.py`）。
+  **不含 `.git`、旧 remote（`origin = speculators-for-glm52`）与旧分支 `diff-dspark`** ——
+  即"不保留以前的分支"，从本仓库起独立管理。
+  本地原目录仍被正在运行的训练进程使用，故未移动；此处为只读快照。
+- **`script/`**：各实验启动脚本 `*.sh`（`train_*.sh`、`vllm_serve_*.sh`）等，整目录镜像。
