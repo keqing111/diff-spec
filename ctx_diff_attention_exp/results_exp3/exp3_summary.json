@@ -1,0 +1,54 @@
+{
+  "was_changed/NEW": {
+    "n": 16,
+    "cells": {
+      "TT": 0,
+      "TF": 0,
+      "FT": 15,
+      "FF": 1
+    },
+    "p_exp|tc": null,
+    "attn_new-mean": 5.763861650601029,
+    "attn_old-mean": 5.947442673146725,
+    "n_tgtX_draftOK": 15
+  },
+  "was_changed/OLD": {
+    "n": 16,
+    "cells": {
+      "TT": 11,
+      "TF": 2,
+      "FT": 1,
+      "FF": 2
+    },
+    "p_exp|tc": 0.5503016916605142,
+    "attn_new-mean": 2.140173612162471,
+    "attn_old-mean": 6.463458467274904,
+    "n_tgtX_draftOK": 1
+  },
+  "is_now/NEW": {
+    "n": 16,
+    "cells": {
+      "TT": 0,
+      "TF": 0,
+      "FT": 9,
+      "FF": 7
+    },
+    "p_exp|tc": null,
+    "attn_new-mean": 5.248082593083382,
+    "attn_old-mean": 8.404962971806526,
+    "n_tgtX_draftOK": 9
+  },
+  "is_now/OLD": {
+    "n": 16,
+    "cells": {
+      "TT": 6,
+      "TF": 10,
+      "FT": 0,
+      "FF": 0
+    },
+    "p_exp|tc": 0.35362751211505383,
+    "attn_new-mean": 2.469174813479185,
+    "attn_old-mean": 8.180045984685421,
+    "n_tgtX_draftOK": 0
+  }
+}
