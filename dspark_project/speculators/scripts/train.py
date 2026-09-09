@@ -599,6 +599,7 @@ def main(args: argparse.Namespace):  # noqa: C901
         save_best=args.save_best,
         hidden_states_dtype=hidden_states_dtype,
         log_freq=args.log_freq,
+        grad_accum=args.grad_accum,
     )
     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
 
@@ -838,6 +839,20 @@ def parse_args():
     parser.add_argument("--save-path", type=str, default="./output/checkpoints")
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument(
+        "--grad-accum",
+        type=int,
+        default=1,
+        help=(
+            "Number of micro-batches to accumulate gradients over before each "
+            "optimizer + LR-scheduler step. The per-micro-batch loss is divided "
+            "by grad_accum before backward (gradients are averaged over the "
+            "window, i.e. DDP-style data-parallel averaging over grad_accum "
+            "ranks). The LR scheduler horizon is scaled to the number of "
+            "updates (micro-batches / grad_accum). Default: 1 = step every "
+            "micro-batch."
+        ),
+    )
     parser.add_argument("--train-data-ratio", type=float, default=0.9)
     parser.add_argument("--no-resume-from-checkpoint", action="store_true")
     parser.add_argument(
@@ -1129,6 +1144,16 @@ def parse_args():
         help="Restrict Diff-Transformer attention to the base context only "
         "(diff-layer queries may not attend to their own synthetic anchor block). "
         "Default: off (normal block attention).",
+    )
+    parser.add_argument(
+        "--gqa-context-only-layer-indices",
+        type=int,
+        nargs="+",
+        default=[],
+        help="(Optional) Plain-GQA (non-diff) draft layer indices whose attention "
+        "is restricted to the base context only (same mask as "
+        "--diff-attention-context-only, without the diff branch). Must be disjoint "
+        "from --diff-attention-layer-indices. Default: none.",
     )
     parser.add_argument(
         "--sliding-window-non-causal",

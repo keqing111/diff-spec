@@ -108,6 +108,33 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
         self.uses_full_attn = bool(num_draft_layers - len(self.sliding_window_indices))
         self.sliding_window_non_causal = config.sliding_window_non_causal
 
+        # Optional extra ctx-only restriction for plain GQA (non-diff) layers:
+        # the same "look at base context only, not your own synthetic block" mask
+        # that diff layers get via diff_attention_context_only. Must be disjoint
+        # from the diff-layer list and may only target sliding-window layers.
+        gqa_ctx_indices = set(config.gqa_context_only_layer_indices or [])
+        bad = [i for i in gqa_ctx_indices if not 0 <= i < num_draft_layers]
+        if bad:
+            raise ValueError(
+                "gqa_context_only_layer_indices must be valid draft layer ids "
+                f"in range [0, {num_draft_layers}). Got {sorted(bad)}."
+            )
+        if gqa_ctx_indices & diff_layer_indices:
+            raise ValueError(
+                "gqa_context_only_layer_indices and diff_attention_layer_indices "
+                "must be disjoint."
+            )
+        nonsliding = gqa_ctx_indices - set(self.sliding_window_indices)
+        if nonsliding:
+            raise ValueError(
+                "ctx-only is only supported for sliding-window draft layers; "
+                f"layers {sorted(nonsliding)} are not sliding-window layers."
+            )
+        # Every layer that should be masked to base-context only (diff ctx layers
+        # from --diff-attention-context-only plus any GQA layers listed above).
+        self.context_only_layer_indices = set(self.diff_context_layer_indices)
+        self.context_only_layer_indices |= gqa_ctx_indices
+
         self.norm = Qwen3RMSNorm(
             config.transformer_layer_config.hidden_size,
             eps=config.transformer_layer_config.rms_norm_eps,  # type: ignore[arg-type]
@@ -211,6 +238,9 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
             "diff_attention_context_only": kwargs.get(
                 "diff_attention_context_only", False
             ),
+            "gqa_context_only_layer_indices": [
+                int(i) for i in (kwargs.get("gqa_context_only_layer_indices") or [])
+            ],
             "speculators_config": SpeculatorsConfig(
                 algorithm=algorithm,
                 proposal_methods=[
@@ -318,10 +348,11 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
                 sliding_window_non_causal=self.sliding_window_non_causal,
             )
 
-        # context-only 版本: diff 层若开启 diff_attention_context_only,
-        # 用只看 base 上下文的 mask(不含自己合成 block)。
+        # context-only 版本: diff 层若开启 diff_attention_context_only, 或 GQA 层
+        # 出现在 gqa_context_only_layer_indices, 用只看 base 上下文的 mask
+        # (不含自己合成 block)。
         context_only_attn_mask = None
-        if self.diff_context_only and self.uses_sliding_window_attn:
+        if self.context_only_layer_indices and self.uses_sliding_window_attn:
             context_only_attn_mask = self._create_attention_mask(
                 document_ids=document_ids,
                 total_seq_len=total_seq_len,
@@ -413,8 +444,8 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
             # shape: [1, num_anchors*block_size, draft_vocab_size]
 
         for layer_idx, layer in enumerate(self.layers):
-            # context-only diff 层用只看 base 上下文的 mask; 其余层正常。
-            if layer_idx in self.diff_context_layer_indices and self.diff_context_only:
+            # context-only 层(diff 或 GQA)用只看 base 上下文的 mask; 其余层正常。
+            if layer_idx in self.context_only_layer_indices:
                 mask = context_only_attn_mask
             else:
                 mask = (

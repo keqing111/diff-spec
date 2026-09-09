@@ -1,0 +1,66 @@
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+
+== accum12  epoch 0 ==
+2026-09-09 07:49:28.016 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 07:49:28.016 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 07:49:28.017 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 07:49:28.017 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py:147: UserWarning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (Triggered internally at ../torch_npu/csrc/aten/common/TensorFactories.cpp:340.)
+  return func(*args, **(kwargs or {}))
+  [train1000] accept_len=2.8503  
+  [val] accept_len=2.8313  tv_loss=0.2598  
+  [val100] draft_entropy=1.3768  accept_len=3.2179  
+  [out1000] accept_len=2.8415  
+
+== accum12  epoch 1 ==
+2026-09-09 07:59:11.666 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 07:59:11.667 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 07:59:11.667 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 07:59:11.668 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+  [train1000] accept_len=3.4718  
+  [val] accept_len=3.4074  tv_loss=0.2165  
+  [val100] draft_entropy=1.1231  accept_len=3.9605  
+  [out1000] accept_len=3.4061  
+
+== accum12  epoch 2 ==
+2026-09-09 08:02:25.355 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:02:25.356 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 08:02:25.356 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:02:25.356 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+  [train1000] accept_len=3.8130  
+  [val] accept_len=3.6822  tv_loss=0.1977  
+  [val100] draft_entropy=1.0474  accept_len=4.2603  
+  [out1000] accept_len=3.6772  
+
+== gqa_ctx_l0_a12  epoch 0 ==
+2026-09-09 08:05:45.344 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:05:45.345 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 08:05:45.345 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:05:45.346 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+  [train1000] accept_len=3.3314  
+  [val] accept_len=3.3004  tv_loss=0.2236  
+  [val100] draft_entropy=1.2546  accept_len=3.6619  
+  [out1000] accept_len=3.3112  
+
+== gqa_ctx_l0_a12  epoch 1 ==
+2026-09-09 08:09:28.005 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:09:28.006 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 08:09:28.006 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:09:28.007 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+  [train1000] accept_len=3.8619  
+  [val] accept_len=3.8082  tv_loss=0.1875  
+  [val100] draft_entropy=1.0560  accept_len=4.3362  
+  [out1000] accept_len=3.8047  
+
+== gqa_ctx_l0_a12  epoch 2 ==
+2026-09-09 08:13:10.412 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:13:10.413 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-09 08:13:10.413 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-09 08:13:10.414 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+  [train1000] accept_len=4.1553  
+  [val] accept_len=4.0630  tv_loss=0.1712  
+  [val100] draft_entropy=0.9726  accept_len=4.6233  
+  [out1000] accept_len=4.0608  
+
+wrote /home/y50063564/processed_data/dspark_data/dspark_accum/analysis/overfit_check.csv

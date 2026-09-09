@@ -84,6 +84,18 @@ class DFlashSpeculatorConfig(SpeculatorModelConfig):
         "Default False = normal block attention.",
     )
 
+    gqa_context_only_layer_indices: list[int] = Field(
+        default_factory=list,
+        description=(
+            "Draft GQA (non-diff) layer indices whose attention is restricted to "
+            "the base context only, i.e. queries may not attend to their own "
+            "synthetic anchor block (same mask as diff layers get via "
+            "--diff-attention-context-only). Empty = no restriction (default). "
+            "Must be disjoint from diff_attention_layer_indices and must only "
+            "reference sliding-window layers."
+        ),
+    )
+
     @field_serializer("transformer_layer_config")
     def serialize_transformer_config(self, value: PretrainedConfig) -> dict:
         """Serialize transformer config to dict."""

@@ -108,3 +108,16 @@ cat logs/kfix/train_l0_5l_kfix_20260903_064547.log.* > train_l0_5l_kfix_20260903
   即"不保留以前的分支"，从本仓库起独立管理。
   本地原目录仍被正在运行的训练进程使用，故未移动；此处为只读快照。
 - **`script/`**：各实验启动脚本 `*.sh`（`train_*.sh`、`vllm_serve_*.sh`）等，整目录镜像。
+
+---
+
+## 2026-09-09 增量：accum / diff-ctx / gqa-ctx 对比 + 消融（5w 子集）+ 代码改动
+
+- **代码**（`dspark_project/speculators/…`，4 文件增量）：
+  - `--grad-accum N`（scripts/train.py + train/trainer.py）：按 micro-batch 累积、`loss/N` 反传取平均后 step，等价 DDP(dp=N) 语义；N=1 行为不变。
+  - `--gqa-context-only-layer-indices`（models/dflash config/core）：让纯 GQA 层也用"只看 base 上下文"的 mask（原本只发给 diff 层）。
+- **启动/工具脚本**：`dspark_project/script/dspark_accum_exp/`（各 run 启动、CPU 数值对拍 `verify_accum_math.py`、`prep_eval_subsets.py`/`eval_checkpoints.py`（过拟合检查）、interim/final/4-in-1/消融 绘图脚本、watcher）。
+- **日志** `logs/{accum1,accum12,diff_l0_ctx_a12,diff_l3_ctx_a12,gqa_ctx_l0_a12}/`：50k×3 epochs（log_freq=20，各 ~2.5MB）。
+- **结果** `dspark_accum_results/`：对比图（accum1 vs accum12、diff/gqa-ctx@l0 vs plain、4-in-1、消融@l0）+ `overfit_check.csv/.log`（epoch0-2 × train1000/val/out1000 的 accept_len、tv、draft entropy）。
+
+**要点**：accum12(=dp12 平均语义) 优于 accum1；diff-ctx 与 gqa-ctx@l0 均优于 plain accum12，且差异基本来自 **ctx-only 本身**（层0 上 diff 分支仅 ~1% 边际增益）；overfit 检查未见明显过拟合。70w 的 dp4+accum3(ctx-only@l0，≈dp12) 长跑进行中，结果后补。

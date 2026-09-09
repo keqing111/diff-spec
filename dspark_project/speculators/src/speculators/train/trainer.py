@@ -116,6 +116,12 @@ class TrainerConfig(NamedTuple):
     save_best: bool = False
     hidden_states_dtype: torch.dtype = torch.bfloat16
     log_freq: int = 1
+    # Number of micro-batches to accumulate gradients over before each
+    # optimizer + LR-scheduler step. The per-micro-batch loss is divided by
+    # grad_accum before backward (i.e. the accumulated gradient is the MEAN
+    # over the window), which is equivalent to DDP-style data-parallel
+    # averaging over `grad_accum` ranks. 1 == step on every micro-batch.
+    grad_accum: int = 1
 
 
 def _resolve_scheduler_steps(
@@ -321,8 +327,15 @@ class Trainer:
             self.schedulers: list[torch.optim.lr_scheduler.LRScheduler] = []
             return
 
+        # With grad_accum>1, the LR scheduler is stepped once per optimizer
+        # update, so its horizon is the number of *updates* per epoch, not the
+        # number of micro-batches. (A user-provided --scheduler-total-steps is
+        # respected as-is inside _resolve_scheduler_steps.)
+        sched_loader_len = len(self.train_loader)
+        if self.config.grad_accum > 1:
+            sched_loader_len = max(1, sched_loader_len // self.config.grad_accum)
         scheduler_warmup_steps, scheduler_total_steps = _resolve_scheduler_steps(
-            self.config, len(self.train_loader)
+            self.config, sched_loader_len
         )
 
         def make_scheduler(opt: torch.optim.Optimizer):
@@ -412,6 +425,11 @@ class Trainer:
             if self.config.checkpoint_freq < 1
             else None
         )
+        accum = self.config.grad_accum
+        # Micro-batches accumulated toward the *current* optimizer window.
+        # Reset per epoch: a partial trailing window (num_steps % accum != 0)
+        # is dropped, exactly as each DDP rank only steps on complete windows.
+        self._accum_count = 0
         t_before_fetch = time.perf_counter()
         timer = _StepTimer()
         for local_step_rel, batch in enumerate(train_loader, 1):
@@ -433,18 +451,34 @@ class Trainer:
             )
 
             timer.mark("fwd")
-            self._optimizers_zero_grad()
+            if accum > 1:
+                # Mean over the accumulation window (not a sum). Averaging the
+                # per-micro-batch gradients reproduces the DDP all-reduce mean
+                # over `accum` data-parallel ranks with the same per-step LR.
+                loss = loss / accum
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
 
-            timer.mark("bwd")
-            self._optimizers_step()
+            # Accumulate gradients over `accum` micro-batches and take ONE
+            # optimizer + LR-scheduler step (grad_accum == 1 keeps the previous
+            # per-micro-batch behaviour bit-for-bit identical).
+            self._accum_count += 1
+            if self._accum_count >= accum:
+                self._accum_count = 0
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+                timer.mark("bwd")
+                self._optimizers_step()
+                self._optimizers_zero_grad()
+                self._schedulers_step()
+                timer.mark("opt")
+            else:
+                # No optimizer step yet — keep accumulating. Metrics for this
+                # micro-batch are still reported below.
+                timer.mark("bwd")
+                timer.mark("opt")
 
             current_lrs = {
                 type(opt).__name__: opt.param_groups[0]["lr"] for opt in self.optimizers
             }
-            self._schedulers_step()
-            timer.mark("opt")
             t_before_fetch = timer.now() or time.perf_counter()
 
             profile = None
@@ -483,6 +517,17 @@ class Trainer:
                 # Avoid saving back to back ay the end of each epoch
             ):
                 self.maybe_save_checkpoint(epoch, local_step=local_step)
+
+        if accum > 1 and self._accum_count > 0:
+            # num_steps wasn't a multiple of accum: drop the partially
+            # accumulated trailing window so it can't leak into the next epoch.
+            dropped = self._accum_count
+            self._optimizers_zero_grad()
+            self._accum_count = 0
+            root_logger.info(
+                f"Dropped a partial accumulation window of {dropped} "
+                f"micro-batches at epoch end (not stepped; accum={accum})."
+            )
 
     @torch.no_grad()
     def val_epoch(self, epoch: int) -> dict[str, float] | None:
