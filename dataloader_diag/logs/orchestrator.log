@@ -1,0 +1,36 @@
+[10:25:31] waiting for 70w epoch0 completion ...
+[10:31:01] epoch0 done (checkpoint saved)
+[10:31:01] stopping 70w training
+=== pids before ===
+16993 17013 17014 17015 17016 17450 17452 17454 17456 17460 17462 17464 17466 17468 17470 17472 17474 17483 17485 17487 17489 17491 17493 17495 17497 17499 17508 17517 17524 20227 20229 20231 20233 20235 20237 20239 20241 20243 20245 20247 20249 20251 20253 20255 20257 20259 20261 20270 20279 20281 20283 20292 20294 
+SIGTERM sent; waiting for graceful checkpoint (up to ~200s)...
+all exited after ~40s
+remaining: 0
+=== checkpoints now ===
+total 16
+drwxr-xr-x. 3 root root 4096 Sep 10 10:30 .
+drwxr-xr-x. 4 root root 4096 Sep  9 09:25 ..
+drwxr-xr-x. 2 root root 4096 Sep 10 10:30 0
+lrwxrwxrwx. 1 root root    1 Sep 10 10:30 epoch0_end -> 0
+-rw-------. 1 root root 1111 Sep 10 08:26 train_command.txt
+=== training_state ===
+{"epoch": 0, "local_step": 0, "global_step": 28910}
+=== any 'interrupted' dir? ===
+none
+=== tail log ===
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/elastic/agent/s
+    time.sleep(monitor_interval)
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/elastic/multipr
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 16993 got signal: 15
+[ERROR] 2026-09-10-10:31:33 (PID:16993, Device:-1, RankID:-1) ERR99999 UNKNOWN applicaiton exce
+[10:31:36] stopping dp2 server
+[10:31:48] trainers left: 0, vllm left: 0
+[10:31:48] starting DIAG server (card4:1130)
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_diag_20260910_103148.log  pid: 20462
+[10:32:58] diag server ready
+[10:32:58] starting DIAG trainer (dp4 cards0-3, W2, DL_PROFILE=1)
+diag trainer log: /home/y50063564/dataloader_diag/logs/train_diag_20260910_103258.log  pid: 21625
+[10:32:58] diag trainer pid=21625; waiting for it to finish (1 epoch) ...

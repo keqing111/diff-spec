@@ -1,0 +1,10 @@
+[val0] watching /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260910_121602.log
+[val0] val0 completed after ~23 min
+[val0] stopping training (SIGTERM, graceful)
+[val0] ---- val0 metrics (log) ----
+                    (loss_epoch=0.023504)                                       
+[val0] ---- val_metrics.json ----
+{"confidence_loss_epoch": 0.18640932746684868, "confidence_abs_error_epoch": 0.04235795914759682, "confidence_pred_mean_epoch": 0.17220237090022977, "confidence_cumprod_bias_epoch": -0.010609910168330568, "loss_epoch": 0.02350417210047777, "ce_loss_epoch": 0.04133761639528081, "tv_loss_epoch": 0.008577724700784906, "accept_rate_epoch": 0.6907524724668416, "accept_len_epoch": 4.645379792910997, "full_acc_epoch": 0.7112941594992858, "position_1_acc_epoch": 0.8966498863881947, "position_2_acc_epoch": 0.7955586121190363, "position_3_acc_epoch": 0.7396366084888566, "position_4_acc_epoch": 0.6949568835084408, "position_5_acc_epoch": 0.654918229611362, "position_6_acc_epoch": 0.6163138048274728, "position_7_acc_epoch": 0.5784898064605319}
+[val0] ---- checkpoint state ----
+{"epoch": 0, "local_step": 0, "global_step": 28910}
+[val0] DONE

@@ -1,0 +1,12 @@
+[01:07:18] === P0 baseline run tag=before (N=60) ===
+[01:07:18] starting dp2 server (cards 10,15; port 1123)
+[01:09:08] 1123 ready
+[01:09:08] launching training (resume from checkpoint)
+[01:09:08] trainer log: /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260911_010908.log
+[01:10:28] first gs=28921
+[01:11:08] reached gs=28986 (+65 steps)
+[01:11:08] stopping training
+wrote 47 steps -> /home/y50063564/dataloader_diag/p0/p0_before_steps.txt
+first 5: [(28910, '0.131', '5.031', '0.227', '0.048'), (28911, '0.145', '4.755', '0.244', '0.052'), (28912, '0.150', '4.653', '0.259', '0.054'), (28914, '0.128', '5.064', '0.202', '0.045'), (28915, '0.124', '5.232', '0.203', '0.045')]
+[01:11:13] stopping dp2 server
+[01:11:20] P0_before_DONE

@@ -1,0 +1,35 @@
+[08:07:32] server MAX_NUM_SEQS=16 (token budget 32768)
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_080738.log  pid: 87719
+[08:08:58] running W=8 with max_num_seqs=16
+[08:08:58] === RUN E4D_w8_seqs16 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[08:08:58] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[08:09:00] scrapers started: 88892 88893
+[08:09:00] launching trainer
+[08:09:00] trainer pid=88902
+[08:24:46] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 88893 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[08:24:46] profile files: 50  (rank dirs: 4)
+[08:24:46] RUN_DONE E4D_w8_seqs16
+
+=== E4D_w8_seqs16 === 31.1 docs/s | engine 4.5 steps/s, 4478 tok/step, 20115 tok/s
+  running p50=6.0 p90=9.2 max=14 | waiting p50=0.0 max=14
+[08:24:47] server MAX_NUM_SEQS=32 (token budget 32768)
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_082453.log  pid: 89880
+[08:26:13] running W=8 with max_num_seqs=32
+[08:26:13] === RUN E4D_w8_seqs32 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[08:26:13] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[08:26:15] scrapers started: 90737 90738
+[08:26:15] launching trainer
+[08:26:15] trainer pid=90747
+[08:43:01] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 90738 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[08:43:01] profile files: 50  (rank dirs: 4)
+[08:43:01] RUN_DONE E4D_w8_seqs32
+
+=== E4D_w8_seqs32 === 29.7 docs/s | engine 4.4 steps/s, 4331 tok/step, 18972 tok/s
+  running p50=6.0 p90=13.0 max=21 | waiting p50=0.0 max=0
+[08:43:07] control (max_num_seqs=8, budget 4096):
+
+=== E3_w8_pf4 === 29.7 docs/s | engine 7.4 steps/s, 2609 tok/step, 19243 tok/s
+  running p50=3.0 p90=5.0 max=7 | waiting p50=12.0 max=25
+[08:43:08] E4D_CHAIN_DONE

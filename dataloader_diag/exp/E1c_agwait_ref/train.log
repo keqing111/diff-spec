@@ -1,0 +1,558 @@
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+           INFO     get env TERM = xterm                      patch_getenv.py:15
+[02:43:15] INFO     get env LOCAL_RANK = 0                    patch_getenv.py:15
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[02:43:16] INFO     get env WORLD_SIZE = 4                    patch_getenv.py:15
+           INFO     get env MASTER_ADDR =                     patch_getenv.py:15
+                    localhost.localdomain                                       
+           INFO     get env MASTER_PORT = 32839               patch_getenv.py:15
+           INFO     get env TORCHELASTIC_USE_AGENT_STORE =    patch_getenv.py:15
+                    True                                                        
+           INFO     Started distributed with local_rank=0,    distributed.py:165
+                    dp_size=4, sp_size=1                                        
+           INFO     get env PATH =                            patch_getenv.py:15
+                    /usr/local/Ascend/nnal/atb/latest/atb/cxx                   
+                    _abi_1/bin:/usr/local/Ascend/cann-9.0.0/t                   
+                    ools/bishengir/bin:/usr/local/Ascend/cann                   
+                    -9.0.0/bin:/usr/local/Ascend/cann-9.0.0/t                   
+                    ools/ccec_compiler/bin:/usr/local/Ascend/                   
+                    cann-9.0.0/tools/profiler/bin:/usr/local/                   
+                    Ascend/cann-9.0.0/tools/ascend_system_adv                   
+                    isor/asys:/usr/local/Ascend/cann-9.0.0/to                   
+                    ols/show_kernel_debug_data:/usr/local/Asc                   
+                    end/cann-9.0.0/tools/msobjdump:/home/y500                   
+                    63564/node_modules/.bin:/usr/local/Ascend                   
+                    /nnal/atb/latest/atb/cxx_abi_1/bin:/usr/l                   
+                    ocal/Ascend/nnal/atb/latest/atb/cxx_abi_1                   
+                    /bin:/usr/local/Ascend/ascend-toolkit/lat                   
+                    est/bin:/usr/local/Ascend/ascend-toolkit/                   
+                    latest/compiler/ccec_compiler/bin:/usr/lo                   
+                    cal/Ascend/ascend-toolkit/latest/tools/cc                   
+                    ec_compiler/bin:/usr/local/python3.12.13/                   
+                    bin:/usr/local/sbin:/usr/local/bin:/usr/s                   
+                    bin:/usr/bin:/sbin:/bin:/usr/local/go/bin                   
+           INFO     Loading vocab mappings from                     train.py:236
+                    '/home/y50063564/data/open_perfectblend_qwen3_4             
+                    b_700k/d2t.npy' and                                         
+                    '/home/y50063564/data/open_perfectblend_qwen3_4             
+                    b_700k/t2d.npy'                                             
+           INFO     All 5 draft layers using sliding window         train.py:396
+                    attention (window=2048). To use full attention              
+                    on specific layers, pass                                    
+                    '--full-attention-indices <layer_ids>'.                     
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[02:43:16] INFO     Started distributed with local_rank=3,    distributed.py:165
+                    dp_size=4, sp_size=1                                        
+[02:43:17] WARNING  Added <|MASK|> to tokenizer,                     utils.py:49
+                    mask_token_id=151669 (tokenizer len=151670,                 
+                    vocab_size=151936)                                          
+[02:43:17] INFO     Started distributed with local_rank=2,    distributed.py:165
+                    dp_size=4, sp_size=1                                        
+[02:43:17] INFO     Started distributed with local_rank=1,    distributed.py:165
+                    dp_size=4, sp_size=1                                        
+2026-09-11 02:43:30.831 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:30.831 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-11 02:43:30.831 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:30.833 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:31.451 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:31.452 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-11 02:43:31.452 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:31.454 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.005 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.005 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-11 02:43:32.006 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.007 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.279 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.280 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-11 02:43:32.280 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-11 02:43:32.282 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+[02:43:44] INFO     get env SAMP_SEED = 42                    patch_getenv.py:15
+           INFO     get env DL_IN_ORDER = 1                   patch_getenv.py:15
+           INFO     No previous training checkpoint found in      trainer.py:299
+                    '/home/y50063564/dataloader_diag/exp/E1c_agwa               
+                    it_ref/checkpoints'. Starting fresh training                
+                    run.                                                        
+[02:43:53] INFO     Muon optimizer: 39 2D params via Muon, 23   optimizers.py:76
+                    params via AdamW.                                           
+           INFO     get env SAMP_BALANCE = off                patch_getenv.py:15
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[02:43:57] INFO     Training epoch 1/1 started                    trainer.py:734
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py:147: UserWarning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (Triggered internally at ../torch_npu/csrc/aten/common/TensorFactories.cpp:340.)
+  return func(*args, **(kwargs or {}))
+/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py:147: UserWarning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (Triggered internally at ../torch_npu/csrc/aten/common/TensorFactories.cpp:340.)
+  return func(*args, **(kwargs or {}))
+/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py:147: UserWarning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (Triggered internally at ../torch_npu/csrc/aten/common/TensorFactories.cpp:340.)
+  return func(*args, **(kwargs or {}))
+/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py:147: UserWarning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (Triggered internally at ../torch_npu/csrc/aten/common/TensorFactories.cpp:340.)
+  return func(*args, **(kwargs or {}))
+[02:44:02] INFO     train/confidence_loss=0.457,                  trainer.py:584
+                    train/confidence_abs_error=0.325,                           
+                    train/confidence_pred_mean=0.326,                           
+                    train/confidence_cumprod_bias=0.192,                        
+                    train/loss=0.613, train/ce_loss=2.362,                      
+                    train/tv_loss=0.214,                                        
+                    train/accept_rate=3.34e-04,                                 
+                    train/accept_len=1.000,                                     
+                    train/full_acc=0.00e+00,                                    
+                    train/position_1_acc=0.00e+00,                              
+                    train/position_2_acc=0.00e+00,                              
+                    train/position_3_acc=0.00e+00,                              
+                    train/position_4_acc=0.00e+00,                              
+                    train/position_5_acc=0.00e+00,                              
+                    train/position_6_acc=0.00e+00,                              
+                    train/position_7_acc=0.00e+00,                              
+                    profile/fetch_ms=3.51e+03,                                  
+                    profile/fwd_ms=1.20e+03,                                    
+                    profile/bwd_ms=327.276, profile/opt_ms=0.118,               
+                    profile/step_ms=5.04e+03,                                   
+                    profile/tokens_per_s=811.671,                               
+                    profile/fetch_frac=0.696, epoch=0,                          
+                    lr/Muon=0.00e+00, lr/AdamW=0.00e+00,                        
+                    global_step=0                                               
+[02:44:25] INFO     train/confidence_loss=0.059,                  trainer.py:584
+                    train/confidence_abs_error=0.058,                           
+                    train/confidence_pred_mean=0.059,                           
+                    train/confidence_cumprod_bias=0.017,                        
+                    train/loss=0.444, train/ce_loss=2.275,                      
+                    train/tv_loss=0.214,                                        
+                    train/accept_rate=3.92e-04,                                 
+                    train/accept_len=1.000,                                     
+                    train/full_acc=0.00e+00,                                    
+                    train/position_1_acc=0.00e+00,                              
+                    train/position_2_acc=0.00e+00,                              
+                    train/position_3_acc=0.00e+00,                              
+                    train/position_4_acc=0.00e+00,                              
+                    train/position_5_acc=0.00e+00,                              
+                    train/position_6_acc=0.00e+00,                              
+                    train/position_7_acc=0.00e+00,                              
+                    profile/fetch_ms=77.629,                                    
+                    profile/fwd_ms=1.90e+03,                                    
+                    profile/bwd_ms=98.083,                                      
+                    profile/opt_ms=243.053,                                     
+                    profile/step_ms=2.32e+03,                                   
+                    profile/tokens_per_s=1.66e+03,                              
+                    profile/fetch_frac=0.033, epoch=0,                          
+                    lr/Muon=4.37e-04, lr/AdamW=4.37e-05,                        
+                    global_step=20                                              
+[02:44:52] INFO     train/confidence_loss=0.172,                  trainer.py:584
+                    train/confidence_abs_error=0.025,                           
+                    train/confidence_pred_mean=4.60e-04,                        
+                    train/confidence_cumprod_bias=-0.007,                       
+                    train/loss=0.412, train/ce_loss=1.594,                      
+                    train/tv_loss=0.205, train/accept_rate=0.044,               
+                    train/accept_len=1.049, train/full_acc=0.084,               
+                    train/position_1_acc=0.082,                                 
+                    train/position_2_acc=0.089,                                 
+                    train/position_3_acc=0.083,                                 
+                    train/position_4_acc=0.076,                                 
+                    train/position_5_acc=0.083,                                 
+                    train/position_6_acc=0.089,                                 
+                    train/position_7_acc=0.084,                                 
+                    profile/fetch_ms=76.934,                                    
+                    profile/fwd_ms=832.616,                                     
+                    profile/bwd_ms=92.162, profile/opt_ms=0.087,                
+                    profile/step_ms=1.00e+03,                                   
+                    profile/tokens_per_s=3.60e+03,                              
+                    profile/fetch_frac=0.077, epoch=0,                          
+                    lr/Muon=8.12e-04, lr/AdamW=8.12e-05,                        
+                    global_step=40                                              
+[02:45:17] INFO     train/confidence_loss=0.127,                  trainer.py:584
+                    train/confidence_abs_error=0.042,                           
+                    train/confidence_pred_mean=0.025,                           
+                    train/confidence_cumprod_bias=-0.004,                       
+                    train/loss=0.366, train/ce_loss=1.350,                      
+                    train/tv_loss=0.200, train/accept_rate=0.064,               
+                    train/accept_len=1.071, train/full_acc=0.113,               
+                    train/position_1_acc=0.100,                                 
+                    train/position_2_acc=0.134,                                 
+                    train/position_3_acc=0.110,                                 
+                    train/position_4_acc=0.116,                                 
+                    train/position_5_acc=0.102,                                 
+                    train/position_6_acc=0.114,                                 
+                    train/position_7_acc=0.115,                                 
+                    profile/fetch_ms=77.060,                                    
+                    profile/fwd_ms=95.553, profile/bwd_ms=93.654,               
+                    profile/opt_ms=0.092,                                       
+                    profile/step_ms=266.359,                                    
+                    profile/tokens_per_s=1.47e+04,                              
+                    profile/fetch_frac=0.289, epoch=0,                          
+                    lr/Muon=0.001, lr/AdamW=1.25e-04,                           
+                    global_step=60                                              
+[02:45:43] INFO     train/confidence_loss=0.146,                  trainer.py:584
+                    train/confidence_abs_error=0.042,                           
+                    train/confidence_pred_mean=0.013,                           
+                    train/confidence_cumprod_bias=-0.010,                       
+                    train/loss=0.381, train/ce_loss=1.444,                      
+                    train/tv_loss=0.199, train/accept_rate=0.070,               
+                    train/accept_len=1.092, train/full_acc=0.096,               
+                    train/position_1_acc=0.107,                                 
+                    train/position_2_acc=0.085,                                 
+                    train/position_3_acc=0.096,                                 
+                    train/position_4_acc=0.081,                                 
+                    train/position_5_acc=0.105,                                 
+                    train/position_6_acc=0.099,                                 
+                    train/position_7_acc=0.100,                                 
+                    profile/fetch_ms=73.863,                                    
+                    profile/fwd_ms=1.04e+03,                                    
+                    profile/bwd_ms=99.569,                                      
+                    profile/opt_ms=257.587,                                     
+                    profile/step_ms=1.47e+03,                                   
+                    profile/tokens_per_s=2.66e+03,                              
+                    profile/fetch_frac=0.050, epoch=0,                          
+                    lr/Muon=0.002, lr/AdamW=1.69e-04,                           
+                    global_step=80                                              
+[02:46:08] INFO     train/confidence_loss=0.197,                  trainer.py:584
+                    train/confidence_abs_error=0.119,                           
+                    train/confidence_pred_mean=0.123,                           
+                    train/confidence_cumprod_bias=0.019,                        
+                    train/loss=0.381, train/ce_loss=1.344,                      
+                    train/tv_loss=0.187, train/accept_rate=0.124,               
+                    train/accept_len=1.220, train/full_acc=0.149,               
+                    train/position_1_acc=0.156,                                 
+                    train/position_2_acc=0.156,                                 
+                    train/position_3_acc=0.145,                                 
+                    train/position_4_acc=0.150,                                 
+                    train/position_5_acc=0.145,                                 
+                    train/position_6_acc=0.134,                                 
+                    train/position_7_acc=0.154,                                 
+                    profile/fetch_ms=50.886,                                    
+                    profile/fwd_ms=94.023,                                      
+                    profile/bwd_ms=115.038, profile/opt_ms=0.126,               
+                    profile/step_ms=260.073,                                    
+                    profile/tokens_per_s=1.56e+04,                              
+                    profile/fetch_frac=0.196, epoch=0,                          
+                    lr/Muon=0.002, lr/AdamW=2.06e-04,                           
+                    global_step=100                                             
+[02:46:33] INFO     train/confidence_loss=0.240,                  trainer.py:584
+                    train/confidence_abs_error=0.090,                           
+                    train/confidence_pred_mean=0.041,                           
+                    train/confidence_cumprod_bias=-0.027,                       
+                    train/loss=0.384, train/ce_loss=1.300,                      
+                    train/tv_loss=0.179, train/accept_rate=0.160,               
+                    train/accept_len=1.279, train/full_acc=0.192,               
+                    train/position_1_acc=0.206,                                 
+                    train/position_2_acc=0.196,                                 
+                    train/position_3_acc=0.191,                                 
+                    train/position_4_acc=0.200,                                 
+                    train/position_5_acc=0.195,                                 
+                    train/position_6_acc=0.178,                                 
+                    train/position_7_acc=0.176,                                 
+                    profile/fetch_ms=3.473,                                     
+                    profile/fwd_ms=437.022,                                     
+                    profile/bwd_ms=97.076, profile/opt_ms=0.112,                
+                    profile/step_ms=537.683,                                    
+                    profile/tokens_per_s=7.56e+03,                              
+                    profile/fetch_frac=0.006, epoch=0,                          
+                    lr/Muon=0.002, lr/AdamW=2.50e-04,                           
+                    global_step=120                                             
+[02:47:00] INFO     train/confidence_loss=0.240,                  trainer.py:584
+                    train/confidence_abs_error=0.097,                           
+                    train/confidence_pred_mean=0.050,                           
+                    train/confidence_cumprod_bias=-0.033,                       
+                    train/loss=0.381, train/ce_loss=1.275,                      
+                    train/tv_loss=0.173, train/accept_rate=0.183,               
+                    train/accept_len=1.354, train/full_acc=0.223,               
+                    train/position_1_acc=0.242,                                 
+                    train/position_2_acc=0.216,                                 
+                    train/position_3_acc=0.238,                                 
+                    train/position_4_acc=0.203,                                 
+                    train/position_5_acc=0.212,                                 
+                    train/position_6_acc=0.233,                                 
+                    train/position_7_acc=0.216,                                 
+                    profile/fetch_ms=71.297,                                    
+                    profile/fwd_ms=91.877, profile/bwd_ms=96.048,               
+                    profile/opt_ms=281.153,                                     
+                    profile/step_ms=540.376,                                    
+                    profile/tokens_per_s=7.23e+03,                              
+                    profile/fetch_frac=0.132, epoch=0,                          
+                    lr/Muon=0.003, lr/AdamW=2.94e-04,                           
+                    global_step=140                                             
+[02:47:26] INFO     train/confidence_loss=0.252,                  trainer.py:584
+                    train/confidence_abs_error=0.148,                           
+                    train/confidence_pred_mean=0.183,                           
+                    train/confidence_cumprod_bias=0.027,                        
+                    train/loss=0.366, train/ce_loss=1.156,                      
+                    train/tv_loss=0.168, train/accept_rate=0.210,               
+                    train/accept_len=1.391, train/full_acc=0.247,               
+                    train/position_1_acc=0.258,                                 
+                    train/position_2_acc=0.257,                                 
+                    train/position_3_acc=0.251,                                 
+                    train/position_4_acc=0.257,                                 
+                    train/position_5_acc=0.244,                                 
+                    train/position_6_acc=0.232,                                 
+                    train/position_7_acc=0.230,                                 
+                    profile/fetch_ms=71.719,                                    
+                    profile/fwd_ms=90.813, profile/bwd_ms=93.356,               
+                    profile/opt_ms=0.066,                                       
+                    profile/step_ms=255.955,                                    
+                    profile/tokens_per_s=1.54e+04,                              
+                    profile/fetch_frac=0.280, epoch=0,                          
+                    lr/Muon=0.003, lr/AdamW=3.31e-04,                           
+                    global_step=160                                             
+[02:47:52] INFO     train/confidence_loss=0.234,                  trainer.py:584
+                    train/confidence_abs_error=0.110,                           
+                    train/confidence_pred_mean=0.094,                           
+                    train/confidence_cumprod_bias=-0.029,                       
+                    train/loss=0.361, train/ce_loss=1.175,                      
+                    train/tv_loss=0.166, train/accept_rate=0.208,               
+                    train/accept_len=1.522, train/full_acc=0.245,               
+                    train/position_1_acc=0.317,                                 
+                    train/position_2_acc=0.268,                                 
+                    train/position_3_acc=0.248,                                 
+                    train/position_4_acc=0.231,                                 
+                    train/position_5_acc=0.211,                                 
+                    train/position_6_acc=0.214,                                 
+                    train/position_7_acc=0.227,                                 
+                    profile/fetch_ms=53.953,                                    
+                    profile/fwd_ms=96.369, profile/bwd_ms=96.361,               
+                    profile/opt_ms=0.102,                                       
+                    profile/step_ms=246.785,                                    
+                    profile/tokens_per_s=1.34e+04,                              
+                    profile/fetch_frac=0.219, epoch=0,                          
+                    lr/Muon=0.004, lr/AdamW=3.75e-04,                           
+                    global_step=180                                             
+[02:48:20] INFO     train/confidence_loss=0.247,                  trainer.py:584
+                    train/confidence_abs_error=0.106,                           
+                    train/confidence_pred_mean=0.101,                           
+                    train/confidence_cumprod_bias=-0.028,                       
+                    train/loss=0.356, train/ce_loss=1.113,                      
+                    train/tv_loss=0.163, train/accept_rate=0.210,               
+                    train/accept_len=1.582, train/full_acc=0.259,               
+                    train/position_1_acc=0.371,                                 
+                    train/position_2_acc=0.310,                                 
+                    train/position_3_acc=0.242,                                 
+                    train/position_4_acc=0.225,                                 
+                    train/position_5_acc=0.224,                                 
+                    train/position_6_acc=0.208,                                 
+                    train/position_7_acc=0.229,                                 
+                    profile/fetch_ms=75.645,                                    
+                    profile/fwd_ms=93.141, profile/bwd_ms=95.077,               
+                    profile/opt_ms=235.009,                                     
+                    profile/step_ms=498.871,                                    
+                    profile/tokens_per_s=7.46e+03,                              
+                    profile/fetch_frac=0.152, epoch=0,                          
+                    lr/Muon=0.004, lr/AdamW=4.19e-04,                           
+                    global_step=200                                             
+[02:48:42] INFO     train/confidence_loss=0.256,                  trainer.py:584
+                    train/confidence_abs_error=0.142,                           
+                    train/confidence_pred_mean=0.172,                           
+                    train/confidence_cumprod_bias=0.020,                        
+                    train/loss=0.361, train/ce_loss=1.119,                      
+                    train/tv_loss=0.163, train/accept_rate=0.208,               
+                    train/accept_len=1.594, train/full_acc=0.232,               
+                    train/position_1_acc=0.393,                                 
+                    train/position_2_acc=0.255,                                 
+                    train/position_3_acc=0.213,                                 
+                    train/position_4_acc=0.217,                                 
+                    train/position_5_acc=0.190,                                 
+                    train/position_6_acc=0.182,                                 
+                    train/position_7_acc=0.176,                                 
+                    profile/fetch_ms=71.803,                                    
+                    profile/fwd_ms=92.455, profile/bwd_ms=95.910,               
+                    profile/opt_ms=0.080,                                       
+                    profile/step_ms=260.249,                                    
+                    profile/tokens_per_s=1.44e+04,                              
+                    profile/fetch_frac=0.276, epoch=0,                          
+                    lr/Muon=0.005, lr/AdamW=4.56e-04,                           
+                    global_step=220                                             
+[02:49:08] INFO     train/confidence_loss=0.228,                  trainer.py:584
+                    train/confidence_abs_error=0.106,                           
+                    train/confidence_pred_mean=0.108,                           
+                    train/confidence_cumprod_bias=-0.031,                       
+                    train/loss=0.341, train/ce_loss=1.069,                      
+                    train/tv_loss=0.159, train/accept_rate=0.217,               
+                    train/accept_len=1.719, train/full_acc=0.255,               
+                    train/position_1_acc=0.467,                                 
+                    train/position_2_acc=0.283,                                 
+                    train/position_3_acc=0.242,                                 
+                    train/position_4_acc=0.216,                                 
+                    train/position_5_acc=0.207,                                 
+                    train/position_6_acc=0.189,                                 
+                    train/position_7_acc=0.180,                                 
+                    profile/fetch_ms=14.293,                                    
+                    profile/fwd_ms=96.134, profile/bwd_ms=92.687,               
+                    profile/opt_ms=0.098,                                       
+                    profile/step_ms=203.212,                                    
+                    profile/tokens_per_s=1.85e+04,                              
+                    profile/fetch_frac=0.070, epoch=0,                          
+                    lr/Muon=0.005, lr/AdamW=5.00e-04,                           
+                    global_step=240                                             
+[02:49:31] INFO     train/confidence_loss=0.254,                  trainer.py:584
+                    train/confidence_abs_error=0.112,                           
+                    train/confidence_pred_mean=0.136,                           
+                    train/confidence_cumprod_bias=-0.044,                       
+                    train/loss=0.308, train/ce_loss=0.844,                      
+                    train/tv_loss=0.134, train/accept_rate=0.311,               
+                    train/accept_len=2.165, train/full_acc=0.349,               
+                    train/position_1_acc=0.605,                                 
+                    train/position_2_acc=0.440,                                 
+                    train/position_3_acc=0.315,                                 
+                    train/position_4_acc=0.301,                                 
+                    train/position_5_acc=0.275,                                 
+                    train/position_6_acc=0.265,                                 
+                    train/position_7_acc=0.241,                                 
+                    profile/fetch_ms=65.493,                                    
+                    profile/fwd_ms=95.685, profile/bwd_ms=88.625,               
+                    profile/opt_ms=252.205,                                     
+                    profile/step_ms=502.008,                                    
+                    profile/tokens_per_s=7.40e+03,                              
+                    profile/fetch_frac=0.130, epoch=0,                          
+                    lr/Muon=0.005, lr/AdamW=5.44e-04,                           
+                    global_step=260                                             
+[02:49:55] INFO     train/confidence_loss=0.209,                  trainer.py:584
+                    train/confidence_abs_error=0.101,                           
+                    train/confidence_pred_mean=0.136,                           
+                    train/confidence_cumprod_bias=0.016,                        
+                    train/loss=0.344, train/ce_loss=1.163,                      
+                    train/tv_loss=0.158, train/accept_rate=0.218,               
+                    train/accept_len=1.731, train/full_acc=0.252,               
+                    train/position_1_acc=0.483,                                 
+                    train/position_2_acc=0.281,                                 
+                    train/position_3_acc=0.227,                                 
+                    train/position_4_acc=0.171,                                 
+                    train/position_5_acc=0.206,                                 
+                    train/position_6_acc=0.203,                                 
+                    train/position_7_acc=0.190,                                 
+                    profile/fetch_ms=67.289,                                    
+                    profile/fwd_ms=94.313,                                      
+                    profile/bwd_ms=117.435, profile/opt_ms=4.055,               
+                    profile/step_ms=283.092,                                    
+                    profile/tokens_per_s=1.36e+04,                              
+                    profile/fetch_frac=0.238, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=5.81e-04,                           
+                    global_step=280                                             
+[02:50:21] INFO     train/confidence_loss=0.242,                  trainer.py:584
+                    train/confidence_abs_error=0.122,                           
+                    train/confidence_pred_mean=0.209,                           
+                    train/confidence_cumprod_bias=-3.82e-04,                    
+                    train/loss=0.275, train/ce_loss=0.709,                      
+                    train/tv_loss=0.120, train/accept_rate=0.378,               
+                    train/accept_len=2.441, train/full_acc=0.414,               
+                    train/position_1_acc=0.685,                                 
+                    train/position_2_acc=0.487,                                 
+                    train/position_3_acc=0.427,                                 
+                    train/position_4_acc=0.342,                                 
+                    train/position_5_acc=0.330,                                 
+                    train/position_6_acc=0.301,                                 
+                    train/position_7_acc=0.325,                                 
+                    profile/fetch_ms=3.385,                                     
+                    profile/fwd_ms=146.321,                                     
+                    profile/bwd_ms=85.171, profile/opt_ms=0.062,                
+                    profile/step_ms=234.939,                                    
+                    profile/tokens_per_s=1.62e+04,                              
+                    profile/fetch_frac=0.014, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=6.00e-04,                           
+                    global_step=300                                             
+[02:50:44] INFO     train/confidence_loss=0.266,                  trainer.py:584
+                    train/confidence_abs_error=0.105,                           
+                    train/confidence_pred_mean=0.093,                           
+                    train/confidence_cumprod_bias=-0.040,                       
+                    train/loss=0.331, train/ce_loss=0.950,                      
+                    train/tv_loss=0.145, train/accept_rate=0.269,               
+                    train/accept_len=1.917, train/full_acc=0.305,               
+                    train/position_1_acc=0.581,                                 
+                    train/position_2_acc=0.331,                                 
+                    train/position_3_acc=0.289,                                 
+                    train/position_4_acc=0.261,                                 
+                    train/position_5_acc=0.233,                                 
+                    train/position_6_acc=0.225,                                 
+                    train/position_7_acc=0.209,                                 
+                    profile/fetch_ms=65.971,                                    
+                    profile/fwd_ms=90.527, profile/bwd_ms=91.736,               
+                    profile/opt_ms=245.354,                                     
+                    profile/step_ms=493.589,                                    
+                    profile/tokens_per_s=7.67e+03,                              
+                    profile/fetch_frac=0.134, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=5.99e-04,                           
+                    global_step=320                                             
+[02:51:09] INFO     train/confidence_loss=0.250,                  trainer.py:584
+                    train/confidence_abs_error=0.143,                           
+                    train/confidence_pred_mean=0.255,                           
+                    train/confidence_cumprod_bias=0.047,                        
+                    train/loss=0.294, train/ce_loss=0.794,                      
+                    train/tv_loss=0.124, train/accept_rate=0.351,               
+                    train/accept_len=2.340, train/full_acc=0.384,               
+                    train/position_1_acc=0.685,                                 
+                    train/position_2_acc=0.439,                                 
+                    train/position_3_acc=0.378,                                 
+                    train/position_4_acc=0.304,                                 
+                    train/position_5_acc=0.323,                                 
+                    train/position_6_acc=0.287,                                 
+                    train/position_7_acc=0.268,                                 
+                    profile/fetch_ms=68.632,                                    
+                    profile/fwd_ms=91.523, profile/bwd_ms=95.567,               
+                    profile/opt_ms=6.739,                                       
+                    profile/step_ms=262.460,                                    
+                    profile/tokens_per_s=1.47e+04,                              
+                    profile/fetch_frac=0.261, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=5.99e-04,                           
+                    global_step=340                                             
+[02:51:34] INFO     train/confidence_loss=0.249,                  trainer.py:584
+                    train/confidence_abs_error=0.114,                           
+                    train/confidence_pred_mean=0.141,                           
+                    train/confidence_cumprod_bias=-0.039,                       
+                    train/loss=0.300, train/ce_loss=0.819,                      
+                    train/tv_loss=0.130, train/accept_rate=0.327,               
+                    train/accept_len=2.249, train/full_acc=0.361,               
+                    train/position_1_acc=0.656,                                 
+                    train/position_2_acc=0.431,                                 
+                    train/position_3_acc=0.338,                                 
+                    train/position_4_acc=0.300,                                 
+                    train/position_5_acc=0.264,                                 
+                    train/position_6_acc=0.269,                                 
+                    train/position_7_acc=0.268,                                 
+                    profile/fetch_ms=3.381,                                     
+                    profile/fwd_ms=118.707,                                     
+                    profile/bwd_ms=91.253, profile/opt_ms=0.049,                
+                    profile/step_ms=213.389,                                    
+                    profile/tokens_per_s=1.84e+04,                              
+                    profile/fetch_frac=0.016, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=5.98e-04,                           
+                    global_step=360                                             
+[02:52:00] INFO     train/confidence_loss=0.236,                  trainer.py:584
+                    train/confidence_abs_error=0.107,                           
+                    train/confidence_pred_mean=0.138,                           
+                    train/confidence_cumprod_bias=-0.037,                       
+                    train/loss=0.303, train/ce_loss=0.881,                      
+                    train/tv_loss=0.134, train/accept_rate=0.317,               
+                    train/accept_len=2.203, train/full_acc=0.354,               
+                    train/position_1_acc=0.644,                                 
+                    train/position_2_acc=0.395,                                 
+                    train/position_3_acc=0.332,                                 
+                    train/position_4_acc=0.288,                                 
+                    train/position_5_acc=0.290,                                 
+                    train/position_6_acc=0.279,                                 
+                    train/position_7_acc=0.248,                                 
+                    profile/fetch_ms=67.524,                                    
+                    profile/fwd_ms=90.793, profile/bwd_ms=93.173,               
+                    profile/opt_ms=251.969,                                     
+                    profile/step_ms=503.458,                                    
+                    profile/tokens_per_s=7.69e+03,                              
+                    profile/fetch_frac=0.134, epoch=0,                          
+                    lr/Muon=0.006, lr/AdamW=5.98e-04,                           
+                    global_step=380                                             
+[02:52:22] INFO     DL_MAX_STEPS=400 reached (local_step=401);    trainer.py:484
+                    stopping epoch early.                                       
+Epoch 0   1%                          400/28,909  [ 0:08:24 < 9:22:40 , 1 it/s ]
+           INFO     Dropped a partial accumulation window of 1    trainer.py:626
+                    micro-batches at epoch end (not stepped;                    
+                    accum=3).                                                   
+           INFO     Training epoch 1/1 completed                  trainer.py:736
+           INFO     DL_MAX_STEPS reached — exiting after this     trainer.py:739
+                    epoch (skipping checkpoint/validation).                     
+[02:52:24] INFO     Destroyed distributed process group       distributed.py:182
+[02:52:24] INFO     Destroyed distributed process group       distributed.py:182
+[02:52:24] INFO     Destroyed distributed process group       distributed.py:182
+[02:52:25] INFO     Destroyed distributed process group       distributed.py:182

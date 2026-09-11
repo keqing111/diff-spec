@@ -1,0 +1,36 @@
+[02:55:50] waiting for E6 to finish
+[03:29:20] E6 done; analysing
+
+=== E6 流置换 perm=3,2,1,0 (E6_perm_rev) ===
+  rank | load_ms p50 / p90 / >200ms 次数 | 平均 docs/batch | 生产批次
+   r0  |    125.1 /   2274.9 /   743 |   5.90 | 1507
+   r1  |      0.1 /    949.2 /   180 |   5.82 | 1509
+   r2  |      0.1 /      0.2 /    23 |   5.49 | 1509
+   r3  |      0.1 /      0.3 /     1 |   4.67 | 1509
+[03:29:21] launching E5 balance (SAMP_BALANCE=docs)
+[04:02:25] E5 balance done; analysing
+
+=== E5 均衡 SAMP_BALANCE=docs (E5_balance_docs) ===
+  rank | load_ms p50 / p90 / >200ms 次数 | 平均 docs/batch | 生产批次
+   r0  |      0.2 /   1905.0 /   567 |   5.47 | 1506
+   r1  |      0.2 /   1881.6 /   551 |   5.47 | 1508
+   r2  |      0.1 /      0.3 /   102 |   5.47 | 1506
+   r3  |      0.1 /      0.4 /   123 |   5.47 | 1508
+[04:02:26] launching E5' skew (SAMP_BALANCE=skew_docs)
+[04:26:25] E5' skew done; analysing
+
+=== E5' 人为不均衡 SAMP_BALANCE=skew_docs (E5b_skew_docs) ===
+  rank | load_ms p50 / p90 / >200ms 次数 | 平均 docs/batch | 生产批次
+   r0  |      0.2 /      0.2 /     3 |   4.59 | 1009
+   r1  |      0.1 /      0.2 /    26 |   5.41 | 1009
+   r2  |      0.1 /      0.3 /    32 |   5.83 | 1009
+   r3  |    833.1 /   2292.0 /   540 |   6.19 | 1005
+[04:26:25] chain done; baseline E1 for reference:
+
+=== E1 基线（自然不均，对照） (E1_ref_w2_pf4) ===
+  rank | load_ms p50 / p90 / >200ms 次数 | 平均 docs/batch | 生产批次
+   r0  |      0.2 /      0.2 /     1 |   4.67 | 1509
+   r1  |      0.1 /      0.2 /     5 |   5.49 | 1509
+   r2  |      0.1 /      0.3 /    91 |   5.82 | 1509
+   r3  |    897.4 /   2295.2 /   795 |   5.90 | 1506
+[04:26:25] E6_E5_CHAIN_DONE

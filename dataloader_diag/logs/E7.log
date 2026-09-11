@@ -1,0 +1,53 @@
+[09:29:13] starting server (card10:1132, default seqs/budget)
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_092913.log  pid: 92591
+[09:30:24] server ready
+[09:30:24] band(600-800) W=8
+[09:30:24] === RUN E7_band_w8 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[09:30:24] data=/home/y50063564/data/open_perfectblend_qwen3_4b_band600_800  server_port=1132
+[09:30:26] scrapers started: 93554 93555
+[09:30:26] launching trainer
+[09:30:26] trainer pid=93564
+[09:45:12] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 93555 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[09:45:12] profile files: 50  (rank dirs: 4)
+[09:45:12] RUN_DONE E7_band_w8
+
+=== E7_band_w8 === 时长=821s 步/s=1.46 step_time=0.68s
+  server running p50=3.0 max=5 | waiting p50=11.0 max=16
+   r0: docs/batch= 5.32 RTT=  997ms CPU/doc=  122ms | 需求= 7.78 能力= 8.03 **ρ=0.970** | 慢步>200ms= 14.3% fast<1ms= 84.8%
+   r1: docs/batch= 5.34 RTT=  989ms CPU/doc=  114ms | 需求= 7.81 能力= 8.09 **ρ=0.966** | 慢步>200ms=  1.2% fast<1ms= 98.5%
+   r2: docs/batch= 5.34 RTT=  991ms CPU/doc=  117ms | 需求= 7.81 能力= 8.07 **ρ=0.968** | 慢步>200ms=  6.2% fast<1ms= 92.7%
+   r3: docs/batch= 5.31 RTT=  992ms CPU/doc=  116ms | 需求= 7.77 能力= 8.07 **ρ=0.963** | 慢步>200ms=  2.8% fast<1ms= 96.8%
+[09:45:12] band(600-800) W=4
+[09:45:13] === RUN E7_band_w4 === workers=4 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[09:45:13] data=/home/y50063564/data/open_perfectblend_qwen3_4b_band600_800  server_port=1132
+[09:45:15] scrapers started: 94498 94499
+[09:45:15] launching trainer
+[09:45:15] trainer pid=94509
+[10:02:01] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 94499 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[10:02:01] profile files: 34  (rank dirs: 4)
+[10:02:01] RUN_DONE E7_band_w4
+
+=== E7_band_w4 === 时长=945s 步/s=1.27 step_time=0.79s
+  server running p50=2.0 max=6 | waiting p50=0.0 max=7
+   r0: docs/batch= 5.32 RTT=  560ms CPU/doc=  117ms | 需求= 6.76 能力= 7.15 **ρ=0.946** | 慢步>200ms= 12.0% fast<1ms= 87.2%
+   r1: docs/batch= 5.34 RTT=  557ms CPU/doc=  116ms | 需求= 6.78 能力= 7.18 **ρ=0.944** | 慢步>200ms= 10.7% fast<1ms= 88.5%
+   r2: docs/batch= 5.34 RTT=  558ms CPU/doc=  116ms | 需求= 6.78 能力= 7.17 **ρ=0.946** | 慢步>200ms=  0.2% fast<1ms= 99.5%
+   r3: docs/batch= 5.31 RTT=  561ms CPU/doc=  116ms | 需求= 6.74 能力= 7.13 **ρ=0.947** | 慢步>200ms= 19.4% fast<1ms= 79.7%
+[10:02:07] controls (varied lengths):
+
+=== E3_w8_pf4 === 时长=908s 步/s=1.32 step_time=0.76s
+  server running p50=3.0 max=7 | waiting p50=12.0 max=25
+   r0: docs/batch= 4.68 RTT= 1040ms CPU/doc=  127ms | 需求= 6.19 能力= 7.69 **ρ=0.804** | 慢步>200ms=  0.2% fast<1ms= 99.8%
+   r1: docs/batch= 5.50 RTT= 1006ms CPU/doc=  116ms | 需求= 7.27 能力= 7.95 **ρ=0.915** | 慢步>200ms=  0.3% fast<1ms= 99.6%
+   r2: docs/batch= 5.83 RTT=  994ms CPU/doc=  113ms | 需求= 7.71 能力= 8.05 **ρ=0.957** | 慢步>200ms= 14.3% fast<1ms= 85.4%
+   r3: docs/batch= 5.90 RTT=  989ms CPU/doc=  111ms | 需求= 7.80 能力= 8.09 **ρ=0.964** | 慢步>200ms= 12.5% fast<1ms= 86.8%
+
+=== E1_ref_w2_pf4 === 时长=1892s 步/s=0.79 step_time=1.26s
+  server running p50=0.0 max=6 | waiting p50=0.0 max=4
+   r0: docs/batch= 4.67 RTT=  443ms CPU/doc=  137ms | 需求= 3.70 能力= 4.51 **ρ=0.821** | 慢步>200ms=  0.1% fast<1ms= 99.7%
+   r1: docs/batch= 5.49 RTT=  421ms CPU/doc=  123ms | 需求= 4.35 能力= 4.75 **ρ=0.916** | 慢步>200ms=  0.3% fast<1ms= 99.5%
+   r2: docs/batch= 5.82 RTT=  405ms CPU/doc=  114ms | 需求= 4.62 能力= 4.93 **ρ=0.935** | 慢步>200ms=  6.1% fast<1ms= 93.3%
+   r3: docs/batch= 5.90 RTT=  407ms CPU/doc=  119ms | 需求= 4.68 能力= 4.92 **ρ=0.951** | 慢步>200ms= 53.0% fast<1ms= 46.3%
+[10:02:08] E7_DONE

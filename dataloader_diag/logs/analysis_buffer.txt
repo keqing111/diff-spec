@@ -1,0 +1,12 @@
+/home/y50063564/dataloader_diag/analyze_buffer.py:24: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.stats import spearmanr
+Traceback (most recent call last):
+  File "/home/y50063564/dataloader_diag/analyze_buffer.py", line 134, in <module>
+    main()
+  File "/home/y50063564/dataloader_diag/analyze_buffer.py", line 77, in main
+    data = load_ranks()
+           ^^^^^^^^^^^^
+  File "/home/y50063564/dataloader_diag/analyze_buffer.py", line 35, in load_ranks
+    r = int(f.split("rank")[-1].split("/")[0])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3.jsonl'

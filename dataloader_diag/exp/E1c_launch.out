@@ -1,0 +1,10 @@
+[02:41:46] === RUN E1c_agwait_ref === workers=2 prefetch=4 max_steps=400 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=6
+[02:41:46] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[02:42:56] server ready
+[02:42:58] scrapers started: 66558 66559
+[02:42:58] launching trainer
+[02:42:58] trainer pid=66568
+[02:52:44] trainer exited
+run_exp.sh: line 132: 66559 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[02:52:49] profile files: 26  (rank dirs: 4)
+[02:52:49] RUN_DONE E1c_agwait_ref

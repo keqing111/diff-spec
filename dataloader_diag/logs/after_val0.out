@@ -1,0 +1,8 @@
+[12:29:09] waiting for val0 to finish ...
+[12:41:39] val0 done
+[12:41:39] stopping dp2 server (frees cards 10 & 15)
+[12:41:51] vllm left: 0; trainers left: 0
+[12:41:51] starting buffer-depletion experiment (run_tl.sh)
+[13:08:48] analysing buffer dynamics
+[13:08:49] buffer analysis -> logs/analysis_buffer.txt
+[13:08:49] AFTER_VAL0 DONE

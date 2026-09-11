@@ -1,0 +1,7 @@
+[12:41:51] starting server card10:1131
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_diag_inorder0_20260910_124151.log  pid: 41080
+[12:43:02] 1131 ready
+[12:43:02] launching trainer (W2, 1000 steps cap)
+[12:43:02] pid=42177 log=/home/y50063564/dataloader_diag/logs/train_tl_w2_20260910_124302.log
+[13:08:43] trainer done; stopping server
+[13:08:48] TL DONE

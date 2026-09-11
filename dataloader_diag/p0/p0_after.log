@@ -1,0 +1,14 @@
+[01:28:13] === P0 baseline run tag=after (N=60) ===
+[01:28:13] starting dp2 server (cards 10,15; port 1123)
+vLLM dp2 log : /home/y50063564/processed_data/dspark_data/dspark_accum/logs/vllm_dp2_20260911_012813.log
+vLLM dp2 pid : 53850
+[01:29:54] 1123 ready
+[01:29:54] launching training (resume from checkpoint)
+dp4-accum3-ctx70w log : /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260911_012954.log
+dp4-accum3-ctx70w pid : 55959
+[01:29:54] trainer log: /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260911_012954.log
+[01:31:14] first gs=28917
+[01:31:54] reached gs=28977 (+60 steps)
+[01:31:54] stopping training
+[01:31:59] stopping dp2 server
+[01:32:05] P0_after_DONE

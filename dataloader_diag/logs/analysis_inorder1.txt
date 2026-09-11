@@ -1,0 +1,44 @@
+profile files: 24
+events: {'sample': 26880, 'collate': 4956, 'load': 4000, 'timeline': 4000}
+
+=== L1 trainer wait for batch (load_ms) by rank ===
+         n        p50        p90         p99       max
+rank                                                  
+0     1000     0.1340     0.1710     0.33207  2740.879
+1     1000     0.1040     0.1270     0.36512  2721.205
+2     1000     0.1060     0.1351  1022.56216  3223.511
+3     1000  1035.6045  2223.2165  2602.95073  3091.992
+  load_ms>50ms counts by rank: {'0': 2, '1': 8, '2': 31, '3': 548}
+  load_ms>200ms counts by rank: {'0': 1, '1': 8, '2': 23, '3': 542}
+  load_ms>1000ms counts by rank: {'0': 1, '1': 3, '2': 11, '3': 502}
+
+=== L2 per-sample wall_ms by rank/worker ===
+         n       p50       p90         p99       max
+wid                                                 
+0/w1  2843  357.3150  755.5378  1063.44598  1743.165
+0/w0  2852  354.1150  743.4099  1050.29450  1978.924
+1/w1  3361  364.5540  615.6680   957.47260  1346.210
+1/w0  3392  365.6145  592.1919   916.66267  1758.851
+2/w1  3542  367.4575  550.6837   779.22676  1303.869
+3/w1  3635  368.0360  545.4652   726.54566  1481.292
+2/w0  3603  367.4410  540.3208   739.91092  1257.753
+3/w0  3652  370.5045  531.3487   708.99378  1471.068
+  (worker ids are stable per rank; a consistently slow w* = fixed worker)
+
+=== L3 collate wall_ms ===
+         n     p50       p90      max
+rank                                 
+0     1239  43.166   90.1512  596.292
+1     1239  43.146   80.2250  466.799
+2     1239  49.704  119.3030  545.182
+3     1239  38.221   81.3974  392.607
+
+=== L4 forward-entry (t_batch) cross-rank spread per step ===
+  steps=1000  spread_ms: p50=1003.9 p90=2229.6 p99=2603.0 max=3025.3
+  which rank is LATEST most often: {'3': 606, '0': 176, '1': 148, '2': 70}
+  spread>200ms: n=542, median load of the late rank = 1888.1 ms
+  spread>1000ms: n=500, median load of the late rank = 1931.0 ms
+  per-rank t_batch->t_fwd median ms: {0: 1105.6, 1: 1053.8, 2: 946.5, 3: 94.0}
+  per-rank t_fwd->t_end median ms: {0: 21.6, 1: 21.2, 2: 21.0, 3: 21.5}
+
+wrote csvs under /home/y50063564/dataloader_diag/analysis_inorder1/

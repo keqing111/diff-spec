@@ -1,0 +1,46 @@
+[07:13:49] starting server with MAX_NUM_BATCHED_TOKENS=16384
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_071355.log  pid: 82742
+[07:15:05] server ready
+[07:15:05] running W=8 with token budget 16384
+[07:15:05] === RUN E4C_w8_tok16384 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[07:15:05] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[07:15:07] scrapers started: 83812 83813
+[07:15:07] launching trainer
+[07:15:07] trainer pid=83822
+[07:31:38] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 83813 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[07:31:38] profile files: 50  (rank dirs: 4)
+[07:31:38] RUN_DONE E4C_w8_tok16384
+[07:31:38] done token=16384
+
+=== E4C_w8_tok16384 === 时长=909s 步/s=1.32
+  总供给=29.7 docs/s | server prompt tokens/s=19222
+  running p50=4.0 p90=5.0 max=7 | waiting p50=10.0 max=22
+  各 rank 慢步(>200ms)占比: r0:0.4%, r1:0.3%, r2:3.6%, r3:15.6%
+[07:31:39] starting server with MAX_NUM_BATCHED_TOKENS=32768
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_073145.log  pid: 84987
+[07:32:55] server ready
+[07:32:55] running W=8 with token budget 32768
+[07:32:55] === RUN E4C_w8_tok32768 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[07:32:55] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[07:32:57] scrapers started: 85851 85852
+[07:32:57] launching trainer
+[07:32:57] trainer pid=85861
+[07:49:44] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 85852 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[07:49:44] profile files: 50  (rank dirs: 4)
+[07:49:44] RUN_DONE E4C_w8_tok32768
+[07:49:44] done token=32768
+
+=== E4C_w8_tok32768 === 时长=914s 步/s=1.31
+  总供给=29.5 docs/s | server prompt tokens/s=18959
+  running p50=3.0 p90=5.0 max=7 | waiting p50=11.0 max=16
+  各 rank 慢步(>200ms)占比: r0:0.3%, r1:0.7%, r2:4.2%, r3:18.9%
+[07:49:44] stopping server
+[07:49:49] E4C control (token=4096, W=8) for comparison:
+
+=== E3_w8_pf4 === 时长=908s 步/s=1.32
+  总供给=29.7 docs/s | server prompt tokens/s=19221
+  running p50=3.0 p90=5.0 max=7 | waiting p50=12.0 max=25
+  各 rank 慢步(>200ms)占比: r0:0.2%, r1:0.3%, r2:14.3%, r3:12.5%
+[07:49:50] E4C_CHAIN_DONE

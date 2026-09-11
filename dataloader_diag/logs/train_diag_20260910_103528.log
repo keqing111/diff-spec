@@ -1,0 +1,281 @@
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+/usr/local/python3.12.13/lib/python3.12/site-packages/transformers/loss/loss_for_object_detection.py:27: UserWarning: A NumPy version >=1.22.4 and <2.3.0 is required for this version of SciPy (detected version 2.4.6)
+  from scipy.optimize import linear_sum_assignment
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+[10:35:45] INFO     Started distributed with local_rank=3,    distributed.py:163
+                    dp_size=4, sp_size=1                                        
+[timeout] aclrtSetOpExecuteTimeOut(0) rc=0
+           INFO     get env TERM = xterm                      patch_getenv.py:15
+[10:35:46] INFO     get env LOCAL_RANK = 0                    patch_getenv.py:15
+[10:35:46] INFO     Started distributed with local_rank=2,    distributed.py:163
+                    dp_size=4, sp_size=1                                        
+[10:35:53] INFO     Started distributed with local_rank=1,    distributed.py:163
+                    dp_size=4, sp_size=1                                        
+[10:35:53] INFO     get env WORLD_SIZE = 4                    patch_getenv.py:15
+           INFO     get env MASTER_ADDR =                     patch_getenv.py:15
+                    localhost.localdomain                                       
+           INFO     get env MASTER_PORT = 45613               patch_getenv.py:15
+           INFO     get env TORCHELASTIC_USE_AGENT_STORE =    patch_getenv.py:15
+                    True                                                        
+           INFO     Started distributed with local_rank=0,    distributed.py:163
+                    dp_size=4, sp_size=1                                        
+           INFO     get env PATH =                            patch_getenv.py:15
+                    /usr/local/Ascend/nnal/atb/latest/atb/cxx                   
+                    _abi_1/bin:/usr/local/Ascend/cann-9.0.0/t                   
+                    ools/bishengir/bin:/usr/local/Ascend/cann                   
+                    -9.0.0/bin:/usr/local/Ascend/cann-9.0.0/t                   
+                    ools/ccec_compiler/bin:/usr/local/Ascend/                   
+                    cann-9.0.0/tools/profiler/bin:/usr/local/                   
+                    Ascend/cann-9.0.0/tools/ascend_system_adv                   
+                    isor/asys:/usr/local/Ascend/cann-9.0.0/to                   
+                    ols/show_kernel_debug_data:/usr/local/Asc                   
+                    end/cann-9.0.0/tools/msobjdump:/home/y500                   
+                    63564/node_modules/.bin:/usr/local/Ascend                   
+                    /nnal/atb/latest/atb/cxx_abi_1/bin:/usr/l                   
+                    ocal/Ascend/nnal/atb/latest/atb/cxx_abi_1                   
+                    /bin:/usr/local/Ascend/ascend-toolkit/lat                   
+                    est/bin:/usr/local/Ascend/ascend-toolkit/                   
+                    latest/compiler/ccec_compiler/bin:/usr/lo                   
+                    cal/Ascend/ascend-toolkit/latest/tools/cc                   
+                    ec_compiler/bin:/usr/local/python3.12.13/                   
+                    bin:/usr/local/sbin:/usr/local/bin:/usr/s                   
+                    bin:/usr/bin:/sbin:/bin:/usr/local/go/bin                   
+           INFO     Loading vocab mappings from                     train.py:236
+                    '/home/y50063564/data/open_perfectblend_qwen3_4             
+                    b_50k/d2t.npy' and                                          
+                    '/home/y50063564/data/open_perfectblend_qwen3_4             
+                    b_50k/t2d.npy'                                              
+           INFO     All 5 draft layers using sliding window         train.py:396
+                    attention (window=2048). To use full attention              
+                    on specific layers, pass                                    
+                    '--full-attention-indices <layer_ids>'.                     
+[10:35:54] WARNING  Added <|MASK|> to tokenizer,                     utils.py:49
+                    mask_token_id=151669 (tokenizer len=151670,                 
+                    vocab_size=151936)                                          
+2026-09-10 10:36:00.770 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:00.771 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-10 10:36:00.771 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:00.772 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:02.533 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:02.534 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-10 10:36:02.534 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:02.536 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:07.998 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:07.999 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-10 10:36:07.999 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:08.000 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:08.267 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:08.268 | WARNING  | speculators.utils.loading:load_model_layers:104 - Tensor 'lm_head.weight' not found in weight_map.
+2026-09-10 10:36:08.268 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+2026-09-10 10:36:08.270 | INFO     | speculators.utils.loading:_resolve_file:136 - Loading from local directory: /home/y50063564/Qwen3-4B
+[10:36:10] INFO     No previous training checkpoint found in      trainer.py:281
+                    '/home/y50063564/dataloader_diag/checkpoints'               
+                    . Starting fresh training run.                              
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 1276, in <module>
+[rank3]:     main(args)
+[rank3]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 604, in main
+[rank3]:     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
+[rank3]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 211, in __init__
+[rank3]:     self.setup_model()
+[rank3]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 327, in setup_model
+[rank3]:     set_model_state_dict(
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 1407, in set_model_state_dict
+[rank3]:     return _load_model_state_dict(model, model_state_dict, info)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank3]:     return func(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 595, in _load_model_state_dict
+[rank3]:     _broadcast_state_dict(
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/_state_dict_utils.py", line 663, in _broadcast_state_dict
+[rank3]:     dist.broadcast_object_list(broadcast_list, src=0, group=pg)
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank3]:     return func(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 3764, in broadcast_object_list
+[rank3]:     broadcast(object_sizes_tensor, group_src=group_src, group=group)
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank3]:     return func(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 2907, in broadcast
+[rank3]:     work = group.broadcast([tensor], opts)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: RuntimeError: create_config:../torch_npu/csrc/distributed/HCCLUtils.cpp:140 HCCL function error: hcclCommInitRootInfoConfig(numRanks, &rootInfo, rank, config, &(comm->hcclComm_)), error code is 7 
+[rank3]: [ERROR] 2026-09-10-10:36:14 (PID:22873, Device:3, RankID:3) ERR02200 DIST call hccl api failed.
+[rank3]: [PID: 22873] 2026-09-10-10:36:14.543.990 Communication_Error_Bind_IP_Port(EI0020): Failed to enable listening for the NPU network adapter socket. Reason: The IP address 192.168.3.196 and port 16666 have already been bound.
+[rank3]:         Solution: Check whether the single-card multi-process scenario is used. If yes, configure the port number using the environment variable HCCL_NPU_SOCKET_PORT_RANGE.
+
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 1276, in <module>
+[rank2]:     main(args)
+[rank2]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 604, in main
+[rank2]:     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
+[rank2]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 211, in __init__
+[rank2]:     self.setup_model()
+[rank2]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 327, in setup_model
+[rank2]:     set_model_state_dict(
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 1407, in set_model_state_dict
+[rank2]:     return _load_model_state_dict(model, model_state_dict, info)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank2]:     return func(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 595, in _load_model_state_dict
+[rank2]:     _broadcast_state_dict(
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/_state_dict_utils.py", line 663, in _broadcast_state_dict
+[rank2]:     dist.broadcast_object_list(broadcast_list, src=0, group=pg)
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank2]:     return func(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 3764, in broadcast_object_list
+[rank2]:     broadcast(object_sizes_tensor, group_src=group_src, group=group)
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank2]:     return func(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 2907, in broadcast
+[rank2]:     work = group.broadcast([tensor], opts)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]: RuntimeError: create_config:../torch_npu/csrc/distributed/HCCLUtils.cpp:140 HCCL function error: hcclCommInitRootInfoConfig(numRanks, &rootInfo, rank, config, &(comm->hcclComm_)), error code is 7 
+[rank2]: [ERROR] 2026-09-10-10:36:14 (PID:22872, Device:2, RankID:2) ERR02200 DIST call hccl api failed.
+[rank2]: [PID: 22872] 2026-09-10-10:36:14.546.857 Communication_Error_Bind_IP_Port(EI0020): Failed to enable listening for the NPU network adapter socket. Reason: The IP address 192.168.2.197 and port 16666 have already been bound.
+[rank2]:         Solution: Check whether the single-card multi-process scenario is used. If yes, configure the port number using the environment variable HCCL_NPU_SOCKET_PORT_RANGE.
+
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 1276, in <module>
+[rank1]:     main(args)
+[rank1]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 604, in main
+[rank1]:     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
+[rank1]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 211, in __init__
+[rank1]:     self.setup_model()
+[rank1]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 327, in setup_model
+[rank1]:     set_model_state_dict(
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 1407, in set_model_state_dict
+[rank1]:     return _load_model_state_dict(model, model_state_dict, info)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank1]:     return func(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 595, in _load_model_state_dict
+[rank1]:     _broadcast_state_dict(
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/_state_dict_utils.py", line 663, in _broadcast_state_dict
+[rank1]:     dist.broadcast_object_list(broadcast_list, src=0, group=pg)
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank1]:     return func(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 3764, in broadcast_object_list
+[rank1]:     broadcast(object_sizes_tensor, group_src=group_src, group=group)
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank1]:     return func(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 2907, in broadcast
+[rank1]:     work = group.broadcast([tensor], opts)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]: RuntimeError: create_config:../torch_npu/csrc/distributed/HCCLUtils.cpp:140 HCCL function error: hcclCommInitRootInfoConfig(numRanks, &rootInfo, rank, config, &(comm->hcclComm_)), error code is 7 
+[rank1]: [ERROR] 2026-09-10-10:36:14 (PID:22871, Device:1, RankID:1) ERR02200 DIST call hccl api failed.
+[rank1]: [PID: 22871] 2026-09-10-10:36:14.597.922 Communication_Error_Bind_IP_Port(EI0020): Failed to enable listening for the NPU network adapter socket. Reason: The IP address 192.168.3.198 and port 16666 have already been bound.
+[rank1]:         Solution: Check whether the single-card multi-process scenario is used. If yes, configure the port number using the environment variable HCCL_NPU_SOCKET_PORT_RANGE.
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 1276, in <module>
+[rank0]:     main(args)
+[rank0]:   File "/home/y50063564/dspark_project/speculators/scripts/train.py", line 604, in main
+[rank0]:     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 211, in __init__
+[rank0]:     self.setup_model()
+[rank0]:   File "/home/y50063564/dspark_project/speculators/src/speculators/train/trainer.py", line 327, in setup_model
+[rank0]:     set_model_state_dict(
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 1407, in set_model_state_dict
+[rank0]:     return _load_model_state_dict(model, model_state_dict, info)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict.py", line 595, in _load_model_state_dict
+[rank0]:     _broadcast_state_dict(
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/_state_dict_utils.py", line 663, in _broadcast_state_dict
+[rank0]:     dist.broadcast_object_list(broadcast_list, src=0, group=pg)
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 3764, in broadcast_object_list
+[rank0]:     broadcast(object_sizes_tensor, group_src=group_src, group=group)
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py", line 2907, in broadcast
+[rank0]:     work = group.broadcast([tensor], opts)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: create_config:../torch_npu/csrc/distributed/HCCLUtils.cpp:140 HCCL function error: hcclCommInitRootInfoConfig(numRanks, &rootInfo, rank, config, &(comm->hcclComm_)), error code is 7 
+[rank0]: [ERROR] 2026-09-10-10:36:14 (PID:22870, Device:0, RankID:0) ERR02200 DIST call hccl api failed.
+[rank0]: [PID: 22870] 2026-09-10-10:36:14.603.424 Communication_Error_Bind_IP_Port(EI0020): Failed to enable listening for the NPU network adapter socket. Reason: The IP address 192.168.2.199 and port 16666 have already been bound.
+[rank0]:         Solution: Check whether the single-card multi-process scenario is used. If yes, configure the port number using the environment variable HCCL_NPU_SOCKET_PORT_RANGE.
+
+W0910 10:36:20.058000 22850 site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 22870 closing signal SIGTERM
+W0910 10:36:20.060000 22850 site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 22872 closing signal SIGTERM
+W0910 10:36:20.061000 22850 site-packages/torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 22873 closing signal SIGTERM
+E0910 10:36:20.576000 22850 site-packages/torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 1 (pid: 22871) of binary: /usr/local/python3.12.13/bin/python3
+Traceback (most recent call last):
+  File "/usr/local/python3.12.13/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/home/y50063564/dspark_project/speculators/scripts/train.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2026-09-10_10:36:20
+  host      : localhost.localdomain
+  rank      : 0 (local_rank: 0)
+  exitcode  : -15 (pid: 22870)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 22870
+[2]:
+  time      : 2026-09-10_10:36:20
+  host      : localhost.localdomain
+  rank      : 2 (local_rank: 2)
+  exitcode  : -15 (pid: 22872)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 22872
+[3]:
+  time      : 2026-09-10_10:36:20
+  host      : localhost.localdomain
+  rank      : 3 (local_rank: 3)
+  exitcode  : -15 (pid: 22873)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 22873
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-10_10:36:20
+  host      : localhost.localdomain
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 22871)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+[ERROR] 2026-09-10-10:36:20 (PID:22850, Device:-1, RankID:-1) ERR99999 UNKNOWN applicaiton exception

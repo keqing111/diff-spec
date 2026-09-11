@@ -1,0 +1,12 @@
+[11:03:25] starting single-replica server on card10:1131
+[11:04:35] 1131 ready
+[11:04:35] === running case inorder1 ===
+[11:04:35] case inorder1 pid=28313; waiting (cap 1000 steps)
+[11:30:21] case inorder1 stopped; analysing
+[11:30:23] case inorder1 analysis -> logs/analysis_inorder1.txt
+[11:30:23] === running case inorder0 ===
+[11:30:23] case inorder0 pid=29402; waiting (cap 1000 steps)
+[11:56:09] case inorder0 stopped; analysing
+[11:56:11] case inorder0 analysis -> logs/analysis_inorder0.txt
+[11:56:11] stopping diag server (card10)
+[11:56:16] AB DONE

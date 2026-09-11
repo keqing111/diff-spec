@@ -1,0 +1,27 @@
+[13:11:17] === P0 baseline run tag=before (N=40) ===
+[13:11:17] starting dp2 server (cards 10,15; port 1123)
+vLLM dp2 log : /home/y50063564/processed_data/dspark_data/dspark_accum/logs/vllm_dp2_20260910_131117.log
+vLLM dp2 pid : 44841
+[13:12:57] 1123 ready
+[13:12:57] launching training (resume from checkpoint)
+dp4-accum3-ctx70w log : /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260910_131257.log
+dp4-accum3-ctx70w pid : 47037
+[13:12:57] trainer log: /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260910_131257.log
+[13:14:07] reached gs=28911
+[13:14:07] stopping training
+[13:14:12] stopping dp2 server
+[13:14:18] P0_before_DONE
+[01:07:18] === P0 baseline run tag=before (N=60) ===
+[01:07:18] starting dp2 server (cards 10,15; port 1123)
+vLLM dp2 log : /home/y50063564/processed_data/dspark_data/dspark_accum/logs/vllm_dp2_20260911_010718.log
+vLLM dp2 pid : 50081
+[01:09:08] 1123 ready
+[01:09:08] launching training (resume from checkpoint)
+dp4-accum3-ctx70w log : /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260911_010908.log
+dp4-accum3-ctx70w pid : 51871
+[01:09:08] trainer log: /home/y50063564/processed_data/dspark_data/dspark_accum/dp4_accum3_ctx70w/logs/train_dp4_accum3_ctx70w_20260911_010908.log
+[01:10:28] first gs=28921
+[01:11:08] reached gs=28986 (+65 steps)
+[01:11:08] stopping training
+[01:11:13] stopping dp2 server
+[01:11:20] P0_before_DONE

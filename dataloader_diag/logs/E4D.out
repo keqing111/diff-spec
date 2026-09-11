@@ -1,0 +1,15 @@
+[08:07:32] server MAX_NUM_SEQS=16 (token budget 32768)
+[08:08:58] running W=8 with max_num_seqs=16
+
+=== E4D_w8_seqs16 === 31.1 docs/s | engine 4.5 steps/s, 4478 tok/step, 20115 tok/s
+  running p50=6.0 p90=9.2 max=14 | waiting p50=0.0 max=14
+[08:24:47] server MAX_NUM_SEQS=32 (token budget 32768)
+[08:26:13] running W=8 with max_num_seqs=32
+
+=== E4D_w8_seqs32 === 29.7 docs/s | engine 4.4 steps/s, 4331 tok/step, 18972 tok/s
+  running p50=6.0 p90=13.0 max=21 | waiting p50=0.0 max=0
+[08:43:07] control (max_num_seqs=8, budget 4096):
+
+=== E3_w8_pf4 === 29.7 docs/s | engine 7.4 steps/s, 2609 tok/step, 19243 tok/s
+  running p50=3.0 p90=5.0 max=7 | waiting p50=12.0 max=25
+[08:43:08] E4D_CHAIN_DONE

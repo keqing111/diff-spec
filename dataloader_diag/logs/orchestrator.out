@@ -1,0 +1,9 @@
+[10:25:31] waiting for 70w epoch0 completion ...
+[10:31:01] epoch0 done (checkpoint saved)
+[10:31:01] stopping 70w training
+[10:31:36] stopping dp2 server
+[10:31:48] trainers left: 0, vllm left: 0
+[10:31:48] starting DIAG server (card4:1130)
+[10:32:58] diag server ready
+[10:32:58] starting DIAG trainer (dp4 cards0-3, W2, DL_PROFILE=1)
+[10:32:58] diag trainer pid=21625; waiting for it to finish (1 epoch) ...

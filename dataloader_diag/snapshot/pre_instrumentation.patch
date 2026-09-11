@@ -1,0 +1,581 @@
+diff --git a/scripts/train.py b/scripts/train.py
+index 4b4fe2f..751bc85 100644
+--- a/scripts/train.py
++++ b/scripts/train.py
+@@ -599,6 +599,7 @@ def main(args: argparse.Namespace):  # noqa: C901
+         save_best=args.save_best,
+         hidden_states_dtype=hidden_states_dtype,
+         log_freq=args.log_freq,
++        grad_accum=args.grad_accum,
+     )
+     trainer = Trainer(draft_model, trainer_config, train_loader, val_loader)
+ 
+@@ -838,6 +839,20 @@ def parse_args():
+     parser.add_argument("--save-path", type=str, default="./output/checkpoints")
+     parser.add_argument("--epochs", type=int, default=20)
+     parser.add_argument("--lr", type=float, default=1e-4)
++    parser.add_argument(
++        "--grad-accum",
++        type=int,
++        default=1,
++        help=(
++            "Number of micro-batches to accumulate gradients over before each "
++            "optimizer + LR-scheduler step. The per-micro-batch loss is divided "
++            "by grad_accum before backward (gradients are averaged over the "
++            "window, i.e. DDP-style data-parallel averaging over grad_accum "
++            "ranks). The LR scheduler horizon is scaled to the number of "
++            "updates (micro-batches / grad_accum). Default: 1 = step every "
++            "micro-batch."
++        ),
++    )
+     parser.add_argument("--train-data-ratio", type=float, default=0.9)
+     parser.add_argument("--no-resume-from-checkpoint", action="store_true")
+     parser.add_argument(
+@@ -1122,6 +1137,24 @@ def parse_args():
+         "attention instead of GQA. Default: none (GQA on all layers). "
+         "(e.g. '--diff-attention-layer-indices 4' makes only the last layer diff).",
+     )
++    parser.add_argument(
++        "--diff-attention-context-only",
++        action="store_true",
++        default=False,
++        help="Restrict Diff-Transformer attention to the base context only "
++        "(diff-layer queries may not attend to their own synthetic anchor block). "
++        "Default: off (normal block attention).",
++    )
++    parser.add_argument(
++        "--gqa-context-only-layer-indices",
++        type=int,
++        nargs="+",
++        default=[],
++        help="(Optional) Plain-GQA (non-diff) draft layer indices whose attention "
++        "is restricted to the base context only (same mask as "
++        "--diff-attention-context-only, without the diff branch). Must be disjoint "
++        "from --diff-attention-layer-indices. Default: none.",
++    )
+     parser.add_argument(
+         "--sliding-window-non-causal",
+         action="store_true",
+diff --git a/src/speculators/models/dflash/attention.py b/src/speculators/models/dflash/attention.py
+index 722e7c7..e082791 100644
+--- a/src/speculators/models/dflash/attention.py
++++ b/src/speculators/models/dflash/attention.py
+@@ -11,6 +11,7 @@ def create_anchor_block_mask_mod(
+     block_size: int,
+     sliding_window: int | None = None,
+     sliding_window_non_causal: bool = False,
++    include_same_block: bool = True,
+ ):
+     """
+     Build a flex-attention mask mod where each query block corresponds to one anchor.
+@@ -72,7 +73,11 @@ def create_anchor_block_mask_mod(
+         kv_doc = document_ids[kv_base_pos]
+ 
+         same_doc = (q_doc == kv_doc) & (q_doc != -1)
+-        before_anchor = kv_base_pos < q_anchor
++        # context-only(不含同 block)时允许关注到自己的 anchor base token,
++        # 保证每个 query 至少有一个合法目标(避免空注意力导致 softmax 全 -inf → NaN)。
++        before_anchor = (
++            kv_base_pos <= q_anchor if not include_same_block else kv_base_pos < q_anchor
++        )
+ 
+         in_window = (
+             (kv_base_pos >= q_anchor - sliding_window)
+@@ -97,4 +102,7 @@ def create_anchor_block_mask_mod(
+             same = same & (kv_idx <= q_idx + total_seq_len)
+         return same
+ 
+-    return or_masks(base_prefix_mod, same_block_mod), q_len, kv_len
++    if include_same_block:
++        return or_masks(base_prefix_mod, same_block_mod), q_len, kv_len
++    # context-only: 只允许关注 base 上下文(anchor 之前), 不关注自己的合成 block
++    return base_prefix_mod, q_len, kv_len
+diff --git a/src/speculators/models/dflash/config.py b/src/speculators/models/dflash/config.py
+index 2a47ed4..17ce64f 100644
+--- a/src/speculators/models/dflash/config.py
++++ b/src/speculators/models/dflash/config.py
+@@ -77,6 +77,25 @@ class DFlashSpeculatorConfig(SpeculatorModelConfig):
+         "behavior).",
+     )
+ 
++    diff_attention_context_only: bool = Field(
++        default=False,
++        description="Restrict Diff-Transformer attention to the base context only "
++        "(queries may not attend to their own synthetic anchor block). "
++        "Default False = normal block attention.",
++    )
++
++    gqa_context_only_layer_indices: list[int] = Field(
++        default_factory=list,
++        description=(
++            "Draft GQA (non-diff) layer indices whose attention is restricted to "
++            "the base context only, i.e. queries may not attend to their own "
++            "synthetic anchor block (same mask as diff layers get via "
++            "--diff-attention-context-only). Empty = no restriction (default). "
++            "Must be disjoint from diff_attention_layer_indices and must only "
++            "reference sliding-window layers."
++        ),
++    )
++
+     @field_serializer("transformer_layer_config")
+     def serialize_transformer_config(self, value: PretrainedConfig) -> dict:
+         """Serialize transformer config to dict."""
+diff --git a/src/speculators/models/dflash/core.py b/src/speculators/models/dflash/core.py
+index d224d33..f042146 100644
+--- a/src/speculators/models/dflash/core.py
++++ b/src/speculators/models/dflash/core.py
+@@ -94,6 +94,10 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 for layer_idx in range(num_draft_layers)
+             ]
+         )
++        self.diff_context_only = bool(config.diff_attention_context_only)
++        self.diff_context_layer_indices = (
++            diff_layer_indices if self.diff_context_only else set()
++        )
+         self.sliding_window = tl_config.sliding_window
+         self.sliding_window_indices = [
+             i
+@@ -104,6 +108,33 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         self.uses_full_attn = bool(num_draft_layers - len(self.sliding_window_indices))
+         self.sliding_window_non_causal = config.sliding_window_non_causal
+ 
++        # Optional extra ctx-only restriction for plain GQA (non-diff) layers:
++        # the same "look at base context only, not your own synthetic block" mask
++        # that diff layers get via diff_attention_context_only. Must be disjoint
++        # from the diff-layer list and may only target sliding-window layers.
++        gqa_ctx_indices = set(config.gqa_context_only_layer_indices or [])
++        bad = [i for i in gqa_ctx_indices if not 0 <= i < num_draft_layers]
++        if bad:
++            raise ValueError(
++                "gqa_context_only_layer_indices must be valid draft layer ids "
++                f"in range [0, {num_draft_layers}). Got {sorted(bad)}."
++            )
++        if gqa_ctx_indices & diff_layer_indices:
++            raise ValueError(
++                "gqa_context_only_layer_indices and diff_attention_layer_indices "
++                "must be disjoint."
++            )
++        nonsliding = gqa_ctx_indices - set(self.sliding_window_indices)
++        if nonsliding:
++            raise ValueError(
++                "ctx-only is only supported for sliding-window draft layers; "
++                f"layers {sorted(nonsliding)} are not sliding-window layers."
++            )
++        # Every layer that should be masked to base-context only (diff ctx layers
++        # from --diff-attention-context-only plus any GQA layers listed above).
++        self.context_only_layer_indices = set(self.diff_context_layer_indices)
++        self.context_only_layer_indices |= gqa_ctx_indices
++
+         self.norm = Qwen3RMSNorm(
+             config.transformer_layer_config.hidden_size,
+             eps=config.transformer_layer_config.rms_norm_eps,  # type: ignore[arg-type]
+@@ -204,6 +235,12 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             "diff_attention_layer_indices": kwargs.get(
+                 "diff_attention_layer_indices", []
+             ),
++            "diff_attention_context_only": kwargs.get(
++                "diff_attention_context_only", False
++            ),
++            "gqa_context_only_layer_indices": [
++                int(i) for i in (kwargs.get("gqa_context_only_layer_indices") or [])
++            ],
+             "speculators_config": SpeculatorsConfig(
+                 algorithm=algorithm,
+                 proposal_methods=[
+@@ -262,6 +299,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         device: torch.device,
+         sliding_window: int | None = None,
+         sliding_window_non_causal: bool = False,
++        include_same_block: bool = True,
+     ):
+         mask_mod, q_len, kv_len = create_anchor_block_mask_mod(
+             document_ids=document_ids.squeeze(0).to(device),
+@@ -270,6 +308,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             block_size=self.block_size,
+             sliding_window=sliding_window,
+             sliding_window_non_causal=sliding_window_non_causal,
++            include_same_block=include_same_block,
+         )
+         return self._create_mask_fn(
+             mask_mod,
+@@ -309,7 +348,28 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 sliding_window_non_causal=self.sliding_window_non_causal,
+             )
+ 
+-        return full_attn_mask, sliding_window_attn_mask, anchor_positions, anchor_valid
++        # context-only 版本: diff 层若开启 diff_attention_context_only, 或 GQA 层
++        # 出现在 gqa_context_only_layer_indices, 用只看 base 上下文的 mask
++        # (不含自己合成 block)。
++        context_only_attn_mask = None
++        if self.context_only_layer_indices and self.uses_sliding_window_attn:
++            context_only_attn_mask = self._create_attention_mask(
++                document_ids=document_ids,
++                total_seq_len=total_seq_len,
++                anchor_positions=anchor_positions,
++                device=device,
++                sliding_window=self.sliding_window,
++                sliding_window_non_causal=self.sliding_window_non_causal,
++                include_same_block=False,
++            )
++
++        return (
++            full_attn_mask,
++            sliding_window_attn_mask,
++            context_only_attn_mask,
++            anchor_positions,
++            anchor_valid,
++        )
+ 
+     def _backbone_forward(
+         self,
+@@ -336,9 +396,13 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 total_seq_len, dtype=torch.long, device=device
+             ).unsqueeze(0)
+ 
+-        full_attn_mask, sliding_window_attn_mask, anchor_positions, anchor_valid = (
+-            self._build_attention_mask(loss_mask, num_anchors, document_ids, device)
+-        )
++        (
++            full_attn_mask,
++            sliding_window_attn_mask,
++            context_only_attn_mask,
++            anchor_positions,
++            anchor_valid,
++        ) = self._build_attention_mask(loss_mask, num_anchors, document_ids, device)
+ 
+         mask_tokens_size = num_anchors * self.block_size
+ 
+@@ -380,12 +444,19 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             # shape: [1, num_anchors*block_size, draft_vocab_size]
+ 
+         for layer_idx, layer in enumerate(self.layers):
++            # context-only 层(diff 或 GQA)用只看 base 上下文的 mask; 其余层正常。
++            if layer_idx in self.context_only_layer_indices:
++                mask = context_only_attn_mask
++            else:
++                mask = (
++                    sliding_window_attn_mask
++                    if layer_idx in self.sliding_window_indices
++                    else full_attn_mask
++                )
+             noise_embedding = layer(
+                 hidden_states=noise_embedding,
+                 target_hidden=fc_output,
+-                attention_mask=sliding_window_attn_mask
+-                if layer_idx in self.sliding_window_indices
+-                else full_attn_mask,
++                attention_mask=mask,
+                 position_ids=position_ids,
+                 use_cache=False,
+                 position_embeddings=position_embeddings,
+diff --git a/src/speculators/models/dflash/model_definitions.py b/src/speculators/models/dflash/model_definitions.py
+index 538260f..d124574 100644
+--- a/src/speculators/models/dflash/model_definitions.py
++++ b/src/speculators/models/dflash/model_definitions.py
+@@ -152,6 +152,9 @@ class Qwen3DFlashAttention(nn.Module):
+             sliding_window=self.sliding_window,
+             **kwargs,
+         )
++        if getattr(self, "capture_attention", False) and attn_weights is not None:
++            # 调试用: 捕获 GQA 层注意力权重(默认关闭, 仅 eager 等会返回权重时生效)
++            self._debug_attn = attn_weights.detach()
+         attn_output = attn_output.reshape(bsz, q_len, -1)
+         attn_output = self.o_proj(attn_output)
+         return attn_output, attn_weights
+@@ -386,13 +389,23 @@ class Qwen3DFlashDiffAttention(nn.Module):
+         ).type_as(q)
+         lambda_full = lambda_1 - lambda_2 + self.lambda_init
+ 
+-        attn_weights = attn_weights.view(bsz, self.num_heads, 2, q_len, -1)
+-        attn_weights = attn_weights[:, :, 0] - lambda_full * attn_weights[:, :, 1]
++        attn_pair = attn_weights.view(bsz, self.num_heads, 2, q_len, -1)
++        if getattr(self, "capture_attention", False):
++            # 调试用: 捕获两个分支及相减后的注意力权重(默认关闭)
++            self._debug_branch0 = attn_pair[:, :, 0].detach()
++            self._debug_branch1 = attn_pair[:, :, 1].detach()
++        attn_weights = attn_pair[:, :, 0] - lambda_full * attn_pair[:, :, 1]
+         # [bsz, num_heads, q_len, kv_len]
++        if getattr(self, "capture_attention", False):
++            self._debug_attn = attn_weights.detach()
+ 
+         attn = torch.matmul(attn_weights, v)
+         # [bsz, num_heads, q_len, 2*head_dim]
++        if getattr(self, "capture_attention", False):
++            self._debug_pair_out_raw = attn.detach()  # subln 前每 pair 输出
+         attn = self.subln(attn)
++        if getattr(self, "capture_attention", False):
++            self._debug_pair_out_normed = attn.detach()  # subln 后
+         attn = attn * (1 - self.lambda_init)
+ 
+         attn = attn.transpose(1, 2).reshape(bsz, q_len, -1)
+diff --git a/src/speculators/train/data.py b/src/speculators/train/data.py
+index 91a71ae..782ac5e 100644
+--- a/src/speculators/train/data.py
++++ b/src/speculators/train/data.py
+@@ -27,6 +27,7 @@ from speculators.data_generation.vllm_client import (
+     wait_for_lock,
+ )
+ from speculators.train.noise_transforms import TransformTensors
++from speculators.train import dlprof
+ 
+ BatchType = dict[str, Any]
+ 
+@@ -231,6 +232,19 @@ class BaseDataset(Dataset):
+         raise NotImplementedError
+ 
+     def __getitem__(self, index) -> BatchType | None:
++        # L2: per-sample timing (wall + cpu), opt-in via DL_PROFILE=1.
++        if not dlprof.enabled():
++            return self._getitem(index)
++        w0 = time.perf_counter()
++        c0 = time.process_time()
++        data = self._getitem(index)
++        dlprof.log("sample", index=int(index),
++                   wall_ms=round((time.perf_counter() - w0) * 1000, 3),
++                   cpu_ms=round((time.process_time() - c0) * 1000, 3),
++                   ok=data is not None)
++        return data
++
++    def _getitem(self, index) -> BatchType | None:
+         data = self._get_raw_data(index)
+ 
+         if data is None:
+@@ -631,6 +645,19 @@ def create_collate_fn(
+     preprocess: Callable[[BatchType], BatchType] | None = None,
+ ):
+     def collate_fn(batch: list[BatchType | None]) -> BatchType:
++        # L3: collate timing (runs inside the dataloader worker process).
++        if not dlprof.enabled():
++            return _collate_fn(batch)
++        w0 = time.perf_counter()
++        c0 = time.process_time()
++        out = _collate_fn(batch)
++        dlprof.log("collate", n_in=len(batch),
++                   seq_len=int(out["input_ids"].shape[0]) if "input_ids" in out else -1,
++                   wall_ms=round((time.perf_counter() - w0) * 1000, 3),
++                   cpu_ms=round((time.process_time() - c0) * 1000, 3))
++        return out
++
++    def _collate_fn(batch: list[BatchType | None]) -> BatchType:
+         # Apply per-sample preprocessing and filter failed samples
+         batch = [preprocess(b) if preprocess else b for b in batch if b is not None]
+ 
+diff --git a/src/speculators/train/dataloader.py b/src/speculators/train/dataloader.py
+index de4a055..b3c0018 100644
+--- a/src/speculators/train/dataloader.py
++++ b/src/speculators/train/dataloader.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import logging
++import os
+ import warnings
+ from typing import TYPE_CHECKING, Any, Literal
+ 
+@@ -58,6 +59,10 @@ def _setup_dataloader(
+             preprocess=preprocess,
+         ),
+         persistent_workers=use_workers,
++        # DL_IN_ORDER=0 => in_order=False: a slow worker no longer blocks the
++        # FIFO order, the main process takes whichever batch is ready first
++        # (torch only honours this when num_workers > 0). Default: True.
++        in_order=(os.getenv("DL_IN_ORDER", "1") != "0") if use_workers else True,
+     )
+ 
+ 
+diff --git a/src/speculators/train/trainer.py b/src/speculators/train/trainer.py
+index 47cf7d1..ab8f01a 100644
+--- a/src/speculators/train/trainer.py
++++ b/src/speculators/train/trainer.py
+@@ -1,4 +1,5 @@
+ import json
++import os
+ import logging
+ import time
+ import warnings
+@@ -31,6 +32,7 @@ from speculators.train.distributed import (
+     get_rank,
+     is_distributed,
+ )
++from speculators.train import dlprof
+ from speculators.train.graceful_shutdown import with_graceful_shutdown
+ from speculators.train.optimizers import build_optimizers
+ from speculators.train.utils import normalize_counted_metrics
+@@ -92,6 +94,33 @@ class _StepTimer:
+ warnings.filterwarnings("ignore", category=TqdmExperimentalWarning)
+ MIN_STEP_PCT = 0.25
+ 
++# Opt-in profiling switch (env DL_PROFILE=1); False => loop behaves as before.
++_PROF = dlprof.enabled()
++
++# Optional early stop for diagnostics (env DL_MAX_STEPS=N): stop the epoch after
++# N micro-batches per rank. 0/unset => run the full epoch (default behaviour).
++_MAX_STEPS = int(os.getenv("DL_MAX_STEPS", "0") or 0)
++
++
++def _iter_timed(loader, prof: bool):
++    """Yield (batch, load_ms). `load_ms` is the main-process wait for the batch
++    (None when profiling is off); no torch.distributed calls are made."""
++    it = iter(loader)
++    while True:
++        if prof:
++            t0 = time.perf_counter()
++            try:
++                batch = next(it)
++            except StopIteration:
++                return
++            yield batch, (time.perf_counter() - t0) * 1000.0
++        else:
++            try:
++                batch = next(it)
++            except StopIteration:
++                return
++            yield batch, None
++
+ 
+ class TrainerConfig(NamedTuple):
+     lr: float
+@@ -116,6 +145,12 @@ class TrainerConfig(NamedTuple):
+     save_best: bool = False
+     hidden_states_dtype: torch.dtype = torch.bfloat16
+     log_freq: int = 1
++    # Number of micro-batches to accumulate gradients over before each
++    # optimizer + LR-scheduler step. The per-micro-batch loss is divided by
++    # grad_accum before backward (i.e. the accumulated gradient is the MEAN
++    # over the window), which is equivalent to DDP-style data-parallel
++    # averaging over `grad_accum` ranks. 1 == step on every micro-batch.
++    grad_accum: int = 1
+ 
+ 
+ def _resolve_scheduler_steps(
+@@ -321,8 +356,15 @@ class Trainer:
+             self.schedulers: list[torch.optim.lr_scheduler.LRScheduler] = []
+             return
+ 
++        # With grad_accum>1, the LR scheduler is stepped once per optimizer
++        # update, so its horizon is the number of *updates* per epoch, not the
++        # number of micro-batches. (A user-provided --scheduler-total-steps is
++        # respected as-is inside _resolve_scheduler_steps.)
++        sched_loader_len = len(self.train_loader)
++        if self.config.grad_accum > 1:
++            sched_loader_len = max(1, sched_loader_len // self.config.grad_accum)
+         scheduler_warmup_steps, scheduler_total_steps = _resolve_scheduler_steps(
+-            self.config, len(self.train_loader)
++            self.config, sched_loader_len
+         )
+ 
+         def make_scheduler(opt: torch.optim.Optimizer):
+@@ -412,11 +454,31 @@ class Trainer:
+             if self.config.checkpoint_freq < 1
+             else None
+         )
++        accum = self.config.grad_accum
++        # Micro-batches accumulated toward the *current* optimizer window.
++        # Reset per epoch: a partial trailing window (num_steps % accum != 0)
++        # is dropped, exactly as each DDP rank only steps on complete windows.
++        self._accum_count = 0
+         t_before_fetch = time.perf_counter()
+         timer = _StepTimer()
+-        for local_step_rel, batch in enumerate(train_loader, 1):
++        for local_step_rel, (batch, load_ms) in enumerate(
++            _iter_timed(train_loader, _PROF), 1
++        ):
+             # local_step is 1-based index into the *full* epoch (not the slice).
+             local_step = local_step_rel + skip_steps
++            if _MAX_STEPS and local_step > _MAX_STEPS:
++                root_logger.info(
++                    f"DL_MAX_STEPS={_MAX_STEPS} reached (local_step={local_step}); "
++                    "stopping epoch early."
++                )
++                break
++            if _PROF:  # L1: main-process wait for the next batch (per rank file)
++                dlprof.log("load", global_step=self.global_step, epoch=epoch,
++                           local_step=local_step, load_ms=round(load_ms or 0.0, 3))
++            # L4 anchor: moment this rank has the batch and is about to enter
++            # the model forward (same monotonic clock on the host => alignable).
++            t_batch = time.perf_counter() if _PROF else 0.0
++            t_fwd = t_bwd = t_opt = 0.0
+             timer.reset(self.global_step % self.config.log_freq == 0)
+ 
+             timer.mark_value("start", t_before_fetch)
+@@ -433,18 +495,40 @@ class Trainer:
+             )
+ 
+             timer.mark("fwd")
+-            self._optimizers_zero_grad()
++            if _PROF:
++                t_fwd = time.perf_counter()
++            if accum > 1:
++                # Mean over the accumulation window (not a sum). Averaging the
++                # per-micro-batch gradients reproduces the DDP all-reduce mean
++                # over `accum` data-parallel ranks with the same per-step LR.
++                loss = loss / accum
+             loss.backward()
+-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+ 
+-            timer.mark("bwd")
+-            self._optimizers_step()
++            # Accumulate gradients over `accum` micro-batches and take ONE
++            # optimizer + LR-scheduler step (grad_accum == 1 keeps the previous
++            # per-micro-batch behaviour bit-for-bit identical).
++            self._accum_count += 1
++            if self._accum_count >= accum:
++                self._accum_count = 0
++                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
++                timer.mark("bwd")
++                self._optimizers_step()
++                self._optimizers_zero_grad()
++                self._schedulers_step()
++                timer.mark("opt")
++                if _PROF:
++                    t_bwd = t_opt = time.perf_counter()
++            else:
++                # No optimizer step yet — keep accumulating. Metrics for this
++                # micro-batch are still reported below.
++                timer.mark("bwd")
++                timer.mark("opt")
++                if _PROF:
++                    t_bwd = t_opt = time.perf_counter()
+ 
+             current_lrs = {
+                 type(opt).__name__: opt.param_groups[0]["lr"] for opt in self.optimizers
+             }
+-            self._schedulers_step()
+-            timer.mark("opt")
+             t_before_fetch = timer.now() or time.perf_counter()
+ 
+             profile = None
+@@ -473,6 +557,15 @@ class Trainer:
+                     },
+                     extra={"step": self.global_step},
+                 )
++            if _PROF:  # L4: absolute phase timestamps (same monotonic clock on a
++                # single host => alignable across ranks offline).
++                n_docs = int(gpu_batch["lengths"].numel()) if "lengths" in gpu_batch else -1
++                dlprof.log("timeline", global_step=self.global_step, epoch=epoch,
++                           local_step=local_step, load_ms=round(load_ms or 0.0, 3),
++                           docs_in_batch=n_docs,
++                           t_batch=round(t_batch, 6), t_fwd=round(t_fwd, 6),
++                           t_bwd=round(t_bwd, 6), t_opt=round(t_opt, 6),
++                           t_end=round(time.perf_counter(), 6))
+             self.global_step += 1
+ 
+             if (
+@@ -484,6 +577,17 @@ class Trainer:
+             ):
+                 self.maybe_save_checkpoint(epoch, local_step=local_step)
+ 
++        if accum > 1 and self._accum_count > 0:
++            # num_steps wasn't a multiple of accum: drop the partially
++            # accumulated trailing window so it can't leak into the next epoch.
++            dropped = self._accum_count
++            self._optimizers_zero_grad()
++            self._accum_count = 0
++            root_logger.info(
++                f"Dropped a partial accumulation window of {dropped} "
++                f"micro-batches at epoch end (not stepped; accum={accum})."
++            )
++
+     @torch.no_grad()
+     def val_epoch(self, epoch: int) -> dict[str, float] | None:
+         if self.val_loader is None:

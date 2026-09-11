@@ -1,0 +1,107 @@
+[05:21:47] starting server once
+[05:21:47] === RUN E3_w1_pf4 === workers=1 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[05:21:47] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[05:23:07] server ready
+[05:23:09] scrapers started: 76731 76732
+[05:23:09] launching trainer
+[05:23:09] trainer pid=76741
+[06:03:27] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 76732 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[06:03:27] profile files: 22  (rank dirs: 4)
+[06:03:27] RUN_DONE E3_w1_pf4
+[06:03:27] E3 W=1 done
+
+=== E3_w1_pf4 ===  时长=2335s  步数=1200  step/s=0.51
+  server: running p50=0.0 p90=1.0 max=2 | waiting max=2
+   r0: load p50=    0.1 slow(>200ms)=  0.7% | docs/batch= 4.68 | 该rank供给= 2.42 docs/s (Σ往返1966s)
+   r1: load p50=    0.1 slow(>200ms)=  3.6% | docs/batch= 5.50 | 该rank供给= 2.84 docs/s (Σ往返2194s)
+   r2: load p50= 1429.1 slow(>200ms)= 72.9% | docs/batch= 5.83 | 该rank供给= 3.00 docs/s (Σ往返2225s)
+   r3: load p50= 1171.4 slow(>200ms)= 55.8% | docs/batch= 5.90 | 该rank供给= 3.04 docs/s (Σ往返2234s)
+  合计：消费 11.26 docs/s；客户端供给 Σ=11.30 docs/s
+[06:03:29] running W=4
+[06:03:29] === RUN E3_w4_pf4 === workers=4 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[06:03:29] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[06:03:31] scrapers started: 77913 77914
+[06:03:31] launching trainer
+[06:03:31] trainer pid=77922
+[06:21:32] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 77914 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[06:21:32] profile files: 34  (rank dirs: 4)
+[06:21:32] RUN_DONE E3_w4_pf4
+[06:21:32] E3 W=4 done
+
+=== E3_w4_pf4 ===  时长=1003s  步数=1200  step/s=1.20
+  server: running p50=2.0 p90=4.0 max=7 | waiting max=9
+   r0: load p50=    0.1 slow(>200ms)=  0.1% | docs/batch= 4.68 | 该rank供给= 5.68 docs/s (Σ往返3349s)
+   r1: load p50=    0.1 slow(>200ms)=  0.4% | docs/batch= 5.50 | 该rank供给= 6.67 docs/s (Σ往返3722s)
+   r2: load p50=    0.1 slow(>200ms)= 24.2% | docs/batch= 5.83 | 该rank供给= 7.05 docs/s (Σ往返3893s)
+   r3: load p50=    0.1 slow(>200ms)= 17.6% | docs/batch= 5.90 | 该rank供给= 7.12 docs/s (Σ往返3904s)
+  合计：消费 26.22 docs/s；客户端供给 Σ=26.52 docs/s
+[06:21:33] running W=6
+[06:21:33] === RUN E3_w6_pf4 === workers=6 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[06:21:33] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[06:21:36] scrapers started: 78826 78827
+[06:21:36] launching trainer
+[06:21:36] trainer pid=78835
+[06:38:07] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 78827 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[06:38:07] profile files: 42  (rank dirs: 4)
+[06:38:07] RUN_DONE E3_w6_pf4
+[06:38:07] E3 W=6 done
+
+=== E3_w6_pf4 ===  时长=907s  步数=1200  step/s=1.32
+  server: running p50=3.0 p90=5.0 max=7 | waiting max=16
+   r0: load p50=    0.1 slow(>200ms)=  0.4% | docs/batch= 4.68 | 该rank供给= 6.34 docs/s (Σ往返4562s)
+   r1: load p50=    0.1 slow(>200ms)=  0.8% | docs/batch= 5.50 | 该rank供给= 7.43 docs/s (Σ往返5135s)
+   r2: load p50=    0.1 slow(>200ms)= 14.1% | docs/batch= 5.83 | 该rank供给= 7.85 docs/s (Σ往返5329s)
+   r3: load p50=    0.1 slow(>200ms)= 17.5% | docs/batch= 5.90 | 该rank供给= 7.94 docs/s (Σ往返5350s)
+  合计：消费 28.99 docs/s；客户端供给 Σ=29.56 docs/s
+[06:38:08] running W=8
+[06:38:08] === RUN E3_w8_pf4 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[06:38:08] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[06:38:10] scrapers started: 79771 79772
+[06:38:10] launching trainer
+[06:38:10] trainer pid=79780
+[06:54:41] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 79772 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[06:54:41] profile files: 50  (rank dirs: 4)
+[06:54:41] RUN_DONE E3_w8_pf4
+[06:54:41] E3 W=8 done
+
+=== E3_w8_pf4 ===  时长=908s  步数=1200  step/s=1.32
+  server: running p50=3.0 p90=5.0 max=7 | waiting max=25
+   r0: load p50=    0.1 slow(>200ms)=  0.2% | docs/batch= 4.68 | 该rank供给= 6.37 docs/s (Σ往返6015s)
+   r1: load p50=    0.1 slow(>200ms)=  0.3% | docs/batch= 5.50 | 该rank供给= 7.46 docs/s (Σ往返6817s)
+   r2: load p50=    0.1 slow(>200ms)= 14.3% | docs/batch= 5.83 | 该rank供给= 7.90 docs/s (Σ往返7120s)
+   r3: load p50=    0.1 slow(>200ms)= 12.5% | docs/batch= 5.90 | 该rank供给= 7.98 docs/s (Σ往返7162s)
+  合计：消费 28.96 docs/s；客户端供给 Σ=29.71 docs/s
+[06:54:42] running W=12
+[06:54:42] === RUN E3_w12_pf4 === workers=12 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[06:54:42] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[06:54:45] scrapers started: 80760 80761
+[06:54:45] launching trainer
+[06:54:45] trainer pid=80769
+[07:11:31] trainer exited
+/home/y50063564/dataloader_diag/run_exp.sh: line 134: 80761 Killed                  /usr/local/python3.12.13/bin/python3 /home/y50063564/dataloader_diag/scrape_sys.py --out "$R/sys.jsonl" --interval 1 --pattern "speculators/scripts/train.py" --pattern "vllm" >> "$R/run.log" 2>&1
+[07:11:31] profile files: 66  (rank dirs: 4)
+[07:11:31] RUN_DONE E3_w12_pf4
+[07:11:31] E3 W=12 done
+
+=== E3_w12_pf4 ===  时长=915s  步数=1200  step/s=1.31
+  server: running p50=4.0 p90=5.0 max=6 | waiting max=41
+   r0: load p50=    0.2 slow(>200ms)=  0.3% | docs/batch= 4.68 | 该rank供给= 6.41 docs/s (Σ往返9208s)
+   r1: load p50=    0.1 slow(>200ms)=  0.7% | docs/batch= 5.50 | 该rank供给= 7.50 docs/s (Σ往返10388s)
+   r2: load p50=    0.1 slow(>200ms)=  4.0% | docs/batch= 5.83 | 该rank供给= 7.93 docs/s (Σ往返10824s)
+   r3: load p50=    0.1 slow(>200ms)= 11.9% | docs/batch= 5.90 | 该rank供给= 8.02 docs/s (Σ往返10935s)
+  合计：消费 28.73 docs/s；客户端供给 Σ=29.86 docs/s
+[07:11:32] stopping server
+[07:11:37] E3 reference W=2 (E1) for comparison:
+
+=== E1_ref_w2_pf4 ===  时长=1892s  步数=1500  step/s=0.79
+  server: running p50=0.0 p90=3.0 max=6 | waiting max=4
+   r0: load p50=    0.2 slow(>200ms)=  0.1% | docs/batch= 4.67 | 该rank供给= 3.73 docs/s (Σ往返3123s)
+   r1: load p50=    0.1 slow(>200ms)=  0.3% | docs/batch= 5.49 | 该rank供给= 4.38 docs/s (Σ往返3486s)
+   r2: load p50=    0.1 slow(>200ms)=  6.1% | docs/batch= 5.82 | 该rank供给= 4.64 docs/s (Σ往返3560s)
+   r3: load p50=  897.4 slow(>200ms)= 53.0% | docs/batch= 5.90 | 该rank供给= 4.70 docs/s (Σ往返3615s)
+  合计：消费 17.35 docs/s；客户端供给 Σ=17.44 docs/s
+[07:11:39] E3_CHAIN_DONE

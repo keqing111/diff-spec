@@ -1,0 +1,8 @@
+[09:45:13] === RUN E7_band_w4 === workers=4 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[09:45:13] data=/home/y50063564/data/open_perfectblend_qwen3_4b_band600_800  server_port=1132
+[09:45:15] scrapers started: 94498 94499
+[09:45:15] launching trainer
+[09:45:15] trainer pid=94509
+[10:02:01] trainer exited
+[10:02:01] profile files: 34  (rank dirs: 4)
+[10:02:01] RUN_DONE E7_band_w4

@@ -1,0 +1,16 @@
+[01:34:30] tag=fp0 data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:35:41] tag=fp0 training exit=0
+[01:35:41] tag=fp1 data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:36:52] tag=fp1 training exit=0
+[01:36:52] tag=ag1 data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:38:00] tag=ag1 training exit=0
+[01:40:40] tag=fp0b data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:41:48] tag=fp0b training exit=0
+[01:45:21] tag=fp2 data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:45:45] tag=fp2 data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:46:58] tag=fp2 training exit=0
+[01:47:25] tag=fp1b data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:48:39] tag=fp1b training exit=0
+[01:49:05] tag=p1b data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:49:29] tag=p1b data=/home/y50063564/processed_data/dspark_data/dspark_eval/val
+[01:50:42] tag=p1b training exit=0
