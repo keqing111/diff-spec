@@ -121,3 +121,43 @@ cat logs/kfix/train_l0_5l_kfix_20260903_064547.log.* > train_l0_5l_kfix_20260903
 - **结果** `dspark_accum_results/`：对比图（accum1 vs accum12、diff/gqa-ctx@l0 vs plain、4-in-1、消融@l0）+ `overfit_check.csv/.log`（epoch0-2 × train1000/val/out1000 的 accept_len、tv、draft entropy）。
 
 **要点**：accum12(=dp12 平均语义) 优于 accum1；diff-ctx 与 gqa-ctx@l0 均优于 plain accum12，且差异基本来自 **ctx-only 本身**（层0 上 diff 分支仅 ~1% 边际增益）；overfit 检查未见明显过拟合。70w 的 dp4+accum3(ctx-only@l0，≈dp12) 长跑进行中，结果后补。
+
+---
+
+## 分支 `dataloader-imbalance-0915`（2026-09-15）：DataLoader 负载不均 —— 核对、复现与对外说明
+
+本分支是 `dspark-fsdp-spike-rootcause` 的延续，在其基础上新增两个重新整理的文件夹
+（**不修改**原有的 `dataloader_diag/`）。
+
+| 路径 | 定位 | 内容 |
+|---|---|---|
+| `dataloader_new_0915/` | **对内**：全面核对与复现包 | 精炼版 `REPORT.md` / `EVIDENCE.md`；17 个 run 的**精简数据**（1.3G → 225M，`metrics.jsonl` 只留 6 个 counter）；`repro/` 三个脚本（离线重算，秒级，不需要 GPU/server）；按决定性分类的脚本；`README.md` 含与原始印象的逐条核对表、决定性实验清单、未决问题 |
+| `dataloader_imbalance_0915/` | **对外**：给同事的问题说明 | 只讲 **pack 负载不均**这一条链（现象→原因→后果→复现），自带离线复现脚本（直接用真实 sampler + 数据集，不训练）；含窄带语料对照 |
+
+### 相对 `dataloader_diag/` 的**结论修正**（重要）
+
+整理过程中用原始数据重新核算，有以下修正，前一份报告中的对应表述应视为过时：
+
+1. **`ρ ≈ 0.95` 不是可用的判据，它是同义反复。** 实测 `step_time ≈ docs_max × RTT ÷ num_workers`
+   （7 个配置比值 1.034–1.064 全部命中），代入 ρ 的定义即得 `ρ_max ≡ 1/1.04 ≈ 0.96`，恒为常数。
+   有诊断价值的是那个等式本身：**整步耗时由最重 rank 串行生产一个 pack 的时间决定**。
+2. **`load_ms < 1ms` 不是"缓存命中"。** 系统无本地 hidden-states 缓存（每个样本都请求 server）。
+   该值只表示批次已在 **DataLoader prefetch 队列**里。实测队列深度上限 = `prefetch_factor × num_workers`
+   （E1 为 8、W=8 为 32），与配置精确吻合。
+3. **pack 不均的作用是"集中"而非"加重"风险。** 三次独立的"让 pack 更均"干预
+   （doc 均衡 14.9%→22.4%、统一尺寸 14.9%→17.8%、窄带 W8 6.8%→6.2%）**都没有降低总停顿**；
+   均衡消除的是"谁更可能输"的偏置，不是双稳态本身。
+4. **`--num-workers 2` 是配置缺陷**，不应作为设计依据（该配置下 server `running p50=0`，算力被浪费）。
+
+### 复现（不需要 GPU / server / 训练）
+
+```bash
+cd dataloader_new_0915      && bash repro/01_reproduce_problem.sh   && bash repro/02_reproduce_conclusions.sh
+cd dataloader_imbalance_0915 && bash repro/run_all.sh              # 或 --quick 只跑离线复现
+```
+
+### 数据政策（与本仓库一致）
+
+- 不含任何模型权重/checkpoint（`checkpoints*`、`*.safetensors`、`*.pt`、`*.npy`、`_hs*`、`__pycache__` 均已排除）
+- 原始采集 `*.jsonl` **已 gzip**（`.jsonl.gz`）。还原：`find . -name '*.jsonl.gz' -exec gunzip -k {} \;`
+- 推送前已做凭证泄露检查（本仓库为 public）：无 `github_pat`/`ghp_`/`x-access-token`/私钥

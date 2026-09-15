@@ -1,0 +1,8 @@
+[08:08:58] === RUN E4D_w8_seqs16 === workers=8 prefetch=4 max_steps=1200 server_dp=1 in_order=1 balance=off perm='' seed=42 ag_max=1
+[08:08:58] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+[08:09:00] scrapers started: 88892 88893
+[08:09:00] launching trainer
+[08:09:00] trainer pid=88902
+[08:24:46] trainer exited
+[08:24:46] profile files: 50  (rank dirs: 4)
+[08:24:46] RUN_DONE E4D_w8_seqs16

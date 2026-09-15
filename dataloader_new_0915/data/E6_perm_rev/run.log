@@ -1,0 +1,10 @@
+[02:54:54] === RUN E6_perm_rev === workers=2 prefetch=4 max_steps=1500 server_dp=1 in_order=1 balance=off perm='3,2,1,0' seed=42 ag_max=1
+[02:54:54] data=/home/y50063564/data/open_perfectblend_qwen3_4b_700k  server_port=1132
+diag server log: /home/y50063564/dataloader_diag/logs/vllm_e1_20260911_025454.log  pid: 67863
+[02:56:04] server ready
+[02:56:06] scrapers started: 68891 68892
+[02:56:06] launching trainer
+[02:56:06] trainer pid=68915
+[03:29:09] trainer exited
+[03:29:14] profile files: 26  (rank dirs: 4)
+[03:29:14] RUN_DONE E6_perm_rev

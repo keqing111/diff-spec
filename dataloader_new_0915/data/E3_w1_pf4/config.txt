@@ -1,0 +1,17 @@
+run_id E3_w1_pf4
+git_head 0a5f46cd36ae908b5c96b9ec153fab7e9735ad21
+workers 1
+prefetch_factor 4
+max_steps 1200
+server_dp 1
+in_order 1
+samp_balance off
+samp_perm 
+samp_seed 42
+ag_max_per_fwd 1
+data_path /home/y50063564/data/open_perfectblend_qwen3_4b_700k
+train_dp 4
+train_cards 11,12,13,14
+server_cards 10[,15]
+start_wall 2026-09-11T05:21:47+00:00
+end_wall 2026-09-11T06:03:27+00:00
