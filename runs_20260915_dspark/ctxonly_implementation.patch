@@ -1,0 +1,246 @@
+diff --git a/scripts/train.py b/scripts/train.py
+index 4b4fe2f..32c3b7c 100644
+--- a/scripts/train.py
++++ b/scripts/train.py
+@@ -1122,6 +1193,24 @@ def parse_args():
+         "attention instead of GQA. Default: none (GQA on all layers). "
+         "(e.g. '--diff-attention-layer-indices 4' makes only the last layer diff).",
+     )
++    parser.add_argument(
++        "--diff-attention-context-only",
++        action="store_true",
++        default=False,
++        help="Restrict Diff-Transformer attention to the base context only "
++        "(diff-layer queries may not attend to their own synthetic anchor block). "
++        "Default: off (normal block attention).",
++    )
++    parser.add_argument(
++        "--gqa-context-only-layer-indices",
++        type=int,
++        nargs="+",
++        default=[],
++        help="(Optional) Plain-GQA (non-diff) draft layer indices whose attention "
++        "is restricted to the base context only (same mask as "
++        "--diff-attention-context-only, without the diff branch). Must be disjoint "
++        "from --diff-attention-layer-indices. Default: none.",
++    )
+     parser.add_argument(
+         "--sliding-window-non-causal",
+         action="store_true",
+diff --git a/src/speculators/models/dflash/attention.py b/src/speculators/models/dflash/attention.py
+index 722e7c7..e082791 100644
+--- a/src/speculators/models/dflash/attention.py
++++ b/src/speculators/models/dflash/attention.py
+@@ -11,6 +11,7 @@ def create_anchor_block_mask_mod(
+     block_size: int,
+     sliding_window: int | None = None,
+     sliding_window_non_causal: bool = False,
++    include_same_block: bool = True,
+ ):
+     """
+     Build a flex-attention mask mod where each query block corresponds to one anchor.
+@@ -72,7 +73,11 @@ def create_anchor_block_mask_mod(
+         kv_doc = document_ids[kv_base_pos]
+ 
+         same_doc = (q_doc == kv_doc) & (q_doc != -1)
+-        before_anchor = kv_base_pos < q_anchor
++        # context-only(不含同 block)时允许关注到自己的 anchor base token,
++        # 保证每个 query 至少有一个合法目标(避免空注意力导致 softmax 全 -inf → NaN)。
++        before_anchor = (
++            kv_base_pos <= q_anchor if not include_same_block else kv_base_pos < q_anchor
++        )
+ 
+         in_window = (
+             (kv_base_pos >= q_anchor - sliding_window)
+@@ -97,4 +102,7 @@ def create_anchor_block_mask_mod(
+             same = same & (kv_idx <= q_idx + total_seq_len)
+         return same
+ 
+-    return or_masks(base_prefix_mod, same_block_mod), q_len, kv_len
++    if include_same_block:
++        return or_masks(base_prefix_mod, same_block_mod), q_len, kv_len
++    # context-only: 只允许关注 base 上下文(anchor 之前), 不关注自己的合成 block
++    return base_prefix_mod, q_len, kv_len
+diff --git a/src/speculators/models/dflash/config.py b/src/speculators/models/dflash/config.py
+index 2a47ed4..17ce64f 100644
+--- a/src/speculators/models/dflash/config.py
++++ b/src/speculators/models/dflash/config.py
+@@ -77,6 +77,25 @@ class DFlashSpeculatorConfig(SpeculatorModelConfig):
+         "behavior).",
+     )
+ 
++    diff_attention_context_only: bool = Field(
++        default=False,
++        description="Restrict Diff-Transformer attention to the base context only "
++        "(queries may not attend to their own synthetic anchor block). "
++        "Default False = normal block attention.",
++    )
++
++    gqa_context_only_layer_indices: list[int] = Field(
++        default_factory=list,
++        description=(
++            "Draft GQA (non-diff) layer indices whose attention is restricted to "
++            "the base context only, i.e. queries may not attend to their own "
++            "synthetic anchor block (same mask as diff layers get via "
++            "--diff-attention-context-only). Empty = no restriction (default). "
++            "Must be disjoint from diff_attention_layer_indices and must only "
++            "reference sliding-window layers."
++        ),
++    )
++
+     @field_serializer("transformer_layer_config")
+     def serialize_transformer_config(self, value: PretrainedConfig) -> dict:
+         """Serialize transformer config to dict."""
+diff --git a/src/speculators/models/dflash/core.py b/src/speculators/models/dflash/core.py
+index d224d33..f2a6ae9 100644
+--- a/src/speculators/models/dflash/core.py
++++ b/src/speculators/models/dflash/core.py
+@@ -89,11 +98,15 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                     layer_idx,
+                     attention_class=Qwen3DFlashDiffAttention
+                     if layer_idx in diff_layer_indices
+                     else Qwen3DFlashAttention,
+                 )
+                 for layer_idx in range(num_draft_layers)
+             ]
+         )
++        self.diff_context_only = bool(config.diff_attention_context_only)
++        self.diff_context_layer_indices = (
++            diff_layer_indices if self.diff_context_only else set()
++        )
+         self.sliding_window = tl_config.sliding_window
+         self.sliding_window_indices = [
+             i
+@@ -104,6 +117,33 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         self.uses_full_attn = bool(num_draft_layers - len(self.sliding_window_indices))
+         self.sliding_window_non_causal = config.sliding_window_non_causal
+ 
++        # Optional extra ctx-only restriction for plain GQA (non-diff) layers:
++        # the same "look at base context only, not your own synthetic block" mask
++        # that diff layers get via diff_attention_context_only. Must be disjoint
++        # from the diff-layer list and may only target sliding-window layers.
++        gqa_ctx_indices = set(config.gqa_context_only_layer_indices or [])
++        bad = [i for i in gqa_ctx_indices if not 0 <= i < num_draft_layers]
++        if bad:
++            raise ValueError(
++                "gqa_context_only_layer_indices must be valid draft layer ids "
++                f"in range [0, {num_draft_layers}). Got {sorted(bad)}."
++            )
++        if gqa_ctx_indices & diff_layer_indices:
++            raise ValueError(
++                "gqa_context_only_layer_indices and diff_attention_layer_indices "
++                "must be disjoint."
++            )
++        nonsliding = gqa_ctx_indices - set(self.sliding_window_indices)
++        if nonsliding:
++            raise ValueError(
++                "ctx-only is only supported for sliding-window draft layers; "
++                f"layers {sorted(nonsliding)} are not sliding-window layers."
++            )
++        # Every layer that should be masked to base-context only (diff ctx layers
++        # from --diff-attention-context-only plus any GQA layers listed above).
++        self.context_only_layer_indices = set(self.diff_context_layer_indices)
++        self.context_only_layer_indices |= gqa_ctx_indices
++
+         self.norm = Qwen3RMSNorm(
+             config.transformer_layer_config.hidden_size,
+             eps=config.transformer_layer_config.rms_norm_eps,  # type: ignore[arg-type]
+@@ -204,6 +244,12 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             "diff_attention_layer_indices": kwargs.get(
+                 "diff_attention_layer_indices", []
+             ),
++            "diff_attention_context_only": kwargs.get(
++                "diff_attention_context_only", False
++            ),
++            "gqa_context_only_layer_indices": [
++                int(i) for i in (kwargs.get("gqa_context_only_layer_indices") or [])
++            ],
+             "speculators_config": SpeculatorsConfig(
+                 algorithm=algorithm,
+                 proposal_methods=[
+@@ -262,6 +308,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         device: torch.device,
+         sliding_window: int | None = None,
+         sliding_window_non_causal: bool = False,
++        include_same_block: bool = True,
+     ):
+         mask_mod, q_len, kv_len = create_anchor_block_mask_mod(
+             document_ids=document_ids.squeeze(0).to(device),
+@@ -270,6 +317,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             block_size=self.block_size,
+             sliding_window=sliding_window,
+             sliding_window_non_causal=sliding_window_non_causal,
++            include_same_block=include_same_block,
+         )
+         return self._create_mask_fn(
+             mask_mod,
+@@ -309,7 +357,28 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 sliding_window_non_causal=self.sliding_window_non_causal,
+             )
+ 
+-        return full_attn_mask, sliding_window_attn_mask, anchor_positions, anchor_valid
++        # context-only 版本: diff 层若开启 diff_attention_context_only, 或 GQA 层
++        # 出现在 gqa_context_only_layer_indices, 用只看 base 上下文的 mask
++        # (不含自己合成 block)。
++        context_only_attn_mask = None
++        if self.context_only_layer_indices and self.uses_sliding_window_attn:
++            context_only_attn_mask = self._create_attention_mask(
++                document_ids=document_ids,
++                total_seq_len=total_seq_len,
++                anchor_positions=anchor_positions,
++                device=device,
++                sliding_window=self.sliding_window,
++                sliding_window_non_causal=self.sliding_window_non_causal,
++                include_same_block=False,
++            )
++
++        return (
++            full_attn_mask,
++            sliding_window_attn_mask,
++            context_only_attn_mask,
++            anchor_positions,
++            anchor_valid,
++        )
+ 
+     def _backbone_forward(
+         self,
+@@ -336,9 +405,13 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 total_seq_len, dtype=torch.long, device=device
+             ).unsqueeze(0)
+ 
+-        full_attn_mask, sliding_window_attn_mask, anchor_positions, anchor_valid = (
+-            self._build_attention_mask(loss_mask, num_anchors, document_ids, device)
+-        )
++        (
++            full_attn_mask,
++            sliding_window_attn_mask,
++            context_only_attn_mask,
++            anchor_positions,
++            anchor_valid,
++        ) = self._build_attention_mask(loss_mask, num_anchors, document_ids, device)
+ 
+         mask_tokens_size = num_anchors * self.block_size
+ 
+@@ -380,12 +453,19 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             # shape: [1, num_anchors*block_size, draft_vocab_size]
+ 
+         for layer_idx, layer in enumerate(self.layers):
++            # context-only 层(diff 或 GQA)用只看 base 上下文的 mask; 其余层正常。
++            if layer_idx in self.context_only_layer_indices:
++                mask = context_only_attn_mask
++            else:
++                mask = (
++                    sliding_window_attn_mask
++                    if layer_idx in self.sliding_window_indices
++                    else full_attn_mask
++                )
+             noise_embedding = layer(
+                 hidden_states=noise_embedding,
+                 target_hidden=fc_output,
+-                attention_mask=sliding_window_attn_mask
+-                if layer_idx in self.sliding_window_indices
+-                else full_attn_mask,
++                attention_mask=mask,
+                 position_ids=position_ids,
+                 use_cache=False,
+                 position_embeddings=position_embeddings,

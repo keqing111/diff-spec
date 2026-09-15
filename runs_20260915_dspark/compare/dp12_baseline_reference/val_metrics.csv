@@ -1,0 +1,4 @@
+_ts,_type,val/confidence_loss_epoch,val/confidence_abs_error_epoch,val/confidence_pred_mean_epoch,val/confidence_cumprod_bias_epoch,val/loss_epoch,val/ce_loss_epoch,val/tv_loss_epoch,val/accept_rate_epoch,val/accept_len_epoch,val/full_acc_epoch,val/position_1_acc_epoch,val/position_2_acc_epoch,val/position_3_acc_epoch,val/position_4_acc_epoch,val/position_5_acc_epoch,val/position_6_acc_epoch,val/position_7_acc_epoch,epoch
+15:10:00,val,0.209,0.016,0.052,-0.033,0.003,0.006,0.001,0.654,4.277,0.676,0.813,0.756,0.709,0.668,0.63,0.595,0.56,0
+18:42:21,val,0.191,0.014,0.058,-0.006,0.003,0.005,0.000975,0.697,4.625,0.718,0.841,0.791,0.749,0.712,0.677,0.644,0.611,1
+22:15:13,val,0.185,0.013,0.06,-0.006,0.003,0.004,0.00092,0.713,4.758,0.735,0.852,0.805,0.765,0.728,0.696,0.664,0.632,2

@@ -1,0 +1,12 @@
+arm            : mla
+attn flags     : --draft-attention-type mla --mla-kv-lora-rank 512
+card           : 13
+run root       : /home/y50063564/processed_data/dspark_data/dspark_attn/mla
+data           : /home/y50063564/data/open_perfectblend_qwen3_4b_50k
+verifier       : /home/y50063564/Qwen3-4B
+started        : 2026-09-11T13:34:14+00:00
+log            : /home/y50063564/processed_data/dspark_data/dspark_attn/mla/logs/train_attn_mla_a12_20260911_133414.log
+pid            : 109432
+DL_MAX_STEPS   : 0
+0a5f46cd36ae908b5c96b9ec153fab7e9735ad21
+diff.patch     : /home/y50063564/processed_data/dspark_data/dspark_attn/mla/diff.patch
