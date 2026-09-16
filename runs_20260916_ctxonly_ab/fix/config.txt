@@ -1,0 +1,9 @@
+arm            : fix
+attn flags     : <none>
+card           : 11
+data           : /home/y50063564/data/open_perfectblend_qwen3_4b_50k
+run root       : /home/y50063564/processed_data/dspark_data/dspark_ctxonly_ab/fix
+started        : 2026-09-15T10:18:38+00:00
+log            : /home/y50063564/processed_data/dspark_data/dspark_ctxonly_ab/fix/logs/train_ctxonly_fix_a12_20260915_101838.log
+pid            : 216099
+git HEAD       : 0a5f46cd36ae908b5c96b9ec153fab7e9735ad21

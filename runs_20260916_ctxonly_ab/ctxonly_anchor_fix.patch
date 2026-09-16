@@ -1,0 +1,216 @@
+diff --git a/scripts/train.py b/scripts/train.py
+index 32c3b7c..20d0ef9 100644
+--- a/scripts/train.py
++++ b/scripts/train.py
+@@ -1211,6 +1211,17 @@ def parse_args():
+         "--diff-attention-context-only, without the diff branch). Must be disjoint "
+         "from --diff-attention-layer-indices. Default: none.",
+     )
++    parser.add_argument(
++        "--ctx-only-anchor-in-context",
++        action="store_true",
++        default=False,
++        help="ctx-only masking only. Let ctx-only layers also attend to the base "
++        "KV at the anchor position itself. That KV is the verifier's hidden "
++        "state for the anchor token, which does NOT exist yet at decode time "
++        "(the draft's context K/V only covers positions the target has already "
++        "processed), so enabling this leaks training-only information and "
++        "inflates the analytic accept length. Default: off = match inference.",
++    )
+     parser.add_argument(
+         "--sliding-window-non-causal",
+         action="store_true",
+diff --git a/src/speculators/models/dflash/attention.py b/src/speculators/models/dflash/attention.py
+index e082791..efcfda4 100644
+--- a/src/speculators/models/dflash/attention.py
++++ b/src/speculators/models/dflash/attention.py
+@@ -12,6 +12,7 @@ def create_anchor_block_mask_mod(
+     sliding_window: int | None = None,
+     sliding_window_non_causal: bool = False,
+     include_same_block: bool = True,
++    anchor_in_context: bool = False,
+ ):
+     """
+     Build a flex-attention mask mod where each query block corresponds to one anchor.
+@@ -36,6 +37,17 @@ def create_anchor_block_mask_mod(
+         block_size: number of query tokens per anchor block
+         sliding_window: integer size of sliding window or None for full attn
+         sliding_window_non_causal: Use non causal mask for sliding window attn
++        include_same_block: False restricts queries to the base context only
++            (ctx-only). The synthetic block is then invisible, including the
++            query's own slot.
++        anchor_in_context: only meaningful when ``include_same_block=False``.
++            Whether the base KV **at the anchor position itself** stays visible.
++            Default False, which matches inference: at decode time the draft's
++            context K/V only covers positions the target has already processed,
++            i.e. up to ``anchor - 1``; the anchor's own hidden state does not
++            exist yet. Setting it to True makes the anchor's target hidden state
++            visible during training -- information that is not available at
++            inference, so it leaks.
+ 
+     Returns:
+         mask_mod, q_len, kv_len
+@@ -73,10 +85,17 @@ def create_anchor_block_mask_mod(
+         kv_doc = document_ids[kv_base_pos]
+ 
+         same_doc = (q_doc == kv_doc) & (q_doc != -1)
+-        # context-only(不含同 block)时允许关注到自己的 anchor base token,
+-        # 保证每个 query 至少有一个合法目标(避免空注意力导致 softmax 全 -inf → NaN)。
++        # 可见 base 的上界：
++        #   include_same_block=True  → <  anchor（上游原语义，之后靠 same_block 兜底）
++        #   ctx-only, anchor_in_context=True  → <= anchor。旧行为：把 anchor 位置自己的
++        #     target hidden state 也放进来，训练期能拿到推理期不存在的信息（泄漏）。
++        #     当初加它只是为了让可见集非空、避免 softmax 全 -inf 出 NaN。
++        #   ctx-only, anchor_in_context=False → < anchor，与推理一致。此时可见集可能为空，
++        #     靠 select_anchors 排除“没有同文档前驱”的 anchor 来保证非空。
+         before_anchor = (
+-            kv_base_pos <= q_anchor if not include_same_block else kv_base_pos < q_anchor
++            kv_base_pos <= q_anchor
++            if (not include_same_block and anchor_in_context)
++            else kv_base_pos < q_anchor
+         )
+ 
+         in_window = (
+diff --git a/src/speculators/models/dflash/config.py b/src/speculators/models/dflash/config.py
+index 17ce64f..8da17f5 100644
+--- a/src/speculators/models/dflash/config.py
++++ b/src/speculators/models/dflash/config.py
+@@ -96,6 +96,19 @@ class DFlashSpeculatorConfig(SpeculatorModelConfig):
+         ),
+     )
+ 
++    ctx_only_anchor_in_context: bool = Field(
++        default=False,
++        description=(
++            "ctx-only masking only. Whether the base KV at the anchor position "
++            "stays visible to the block's queries. Default False matches "
++            "inference: at decode time the draft's context K/V covers only "
++            "positions the target has already processed (up to anchor-1), so the "
++            "anchor's own hidden state does not exist yet. True restores the "
++            "earlier behaviour of also exposing it -- training-only information "
++            "that inflates the analytic accept length."
++        ),
++    )
++
+     @field_serializer("transformer_layer_config")
+     def serialize_transformer_config(self, value: PretrainedConfig) -> dict:
+         """Serialize transformer config to dict."""
+diff --git a/src/speculators/models/dflash/core.py b/src/speculators/models/dflash/core.py
+index f2a6ae9..6761089 100644
+--- a/src/speculators/models/dflash/core.py
++++ b/src/speculators/models/dflash/core.py
+@@ -143,6 +143,11 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         # from --diff-attention-context-only plus any GQA layers listed above).
+         self.context_only_layer_indices = set(self.diff_context_layer_indices)
+         self.context_only_layer_indices |= gqa_ctx_indices
++        # Whether ctx-only layers may still see the base KV at the anchor itself.
++        # False (default) matches inference; True is the earlier leaking variant.
++        self.ctx_only_anchor_in_context = bool(
++            getattr(config, "ctx_only_anchor_in_context", False)
++        )
+ 
+         self.norm = Qwen3RMSNorm(
+             config.transformer_layer_config.hidden_size,
+@@ -250,6 +255,9 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             "gqa_context_only_layer_indices": [
+                 int(i) for i in (kwargs.get("gqa_context_only_layer_indices") or [])
+             ],
++            "ctx_only_anchor_in_context": bool(
++                kwargs.get("ctx_only_anchor_in_context", False)
++            ),
+             "speculators_config": SpeculatorsConfig(
+                 algorithm=algorithm,
+                 proposal_methods=[
+@@ -309,6 +317,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         sliding_window: int | None = None,
+         sliding_window_non_causal: bool = False,
+         include_same_block: bool = True,
++        anchor_in_context: bool = False,
+     ):
+         mask_mod, q_len, kv_len = create_anchor_block_mask_mod(
+             document_ids=document_ids.squeeze(0).to(device),
+@@ -318,6 +327,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+             sliding_window=sliding_window,
+             sliding_window_non_causal=sliding_window_non_causal,
+             include_same_block=include_same_block,
++            anchor_in_context=anchor_in_context,
+         )
+         return self._create_mask_fn(
+             mask_mod,
+@@ -333,7 +343,16 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+         total_seq_len = loss_mask.shape[1]
+ 
+         anchor_positions, anchor_valid = select_anchors(
+-            loss_mask, max_anchors, self.block_size
++            loss_mask,
++            max_anchors,
++            self.block_size,
++            document_ids=document_ids,
++            # ctx-only 且不给 anchor 开后门时，必须排除没有同文档前驱的 anchor，
++            # 否则它的可见集为空 → softmax 全 -inf → NaN。
++            require_context_predecessor=(
++                bool(self.context_only_layer_indices)
++                and not self.ctx_only_anchor_in_context
++            ),
+         )
+ 
+         full_attn_mask = None
+@@ -370,6 +389,7 @@ class DFlashDraftModel(DraftVocabMixin, SpeculatorModel):
+                 sliding_window=self.sliding_window,
+                 sliding_window_non_causal=self.sliding_window_non_causal,
+                 include_same_block=False,
++                anchor_in_context=self.ctx_only_anchor_in_context,
+             )
+ 
+         return (
+diff --git a/src/speculators/models/dflash/utils.py b/src/speculators/models/dflash/utils.py
+index 0553750..4e7b500 100644
+--- a/src/speculators/models/dflash/utils.py
++++ b/src/speculators/models/dflash/utils.py
+@@ -22,6 +22,8 @@ def select_anchors(
+     loss_mask: torch.Tensor,  # shape: [1, total_seq_len]
+     num_anchors: int,
+     block_size: int,
++    document_ids: torch.Tensor | None = None,
++    require_context_predecessor: bool = False,
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+     """Randomly select anchor positions from valid tokens in sequence.
+ 
+@@ -29,6 +31,14 @@ def select_anchors(
+         loss_mask: Binary mask indicating valid positions [1, total_seq_len]
+         n: Number of anchors to select per batch item
+         block_size: Block size (last block_size positions excluded)
++        document_ids: [1, total_seq_len] document index per position, pad -1
++        require_context_predecessor: Drop anchors with no base token before them
++            in the same document (i.e. anchors sitting on a document's first
++            token). Needed by ctx-only masking, where queries see the base prefix
++            only: such an anchor would have an empty visible set, making the
++            attention softmax all ``-inf`` and producing NaN. The upstream code
++            avoided that by also letting queries see the anchor token itself,
++            which leaks information that does not exist at inference.
+ 
+     Returns:
+         tuple: (anchors, anchor_valid)
+@@ -44,6 +54,22 @@ def select_anchors(
+     valid_mask = loss_mask.bool().clone()
+     valid_mask[:, -block_size:] = False
+ 
++    if require_context_predecessor:
++        if document_ids is None:
++            raise ValueError(
++                "require_context_predecessor=True needs document_ids to know "
++                "where each document starts."
++            )
++        did = document_ids.reshape(-1)
++        if did.numel() != valid_mask.shape[1]:
++            raise ValueError(
++                f"document_ids has {did.numel()} positions but loss_mask has "
++                f"{valid_mask.shape[1]}."
++            )
++        has_predecessor = torch.zeros_like(did, dtype=torch.bool)
++        has_predecessor[1:] = (did[1:] == did[:-1]) & (did[1:] != -1)
++        valid_mask = valid_mask & has_predecessor.unsqueeze(0)
++
+     valid_indices = torch.nonzero(valid_mask.squeeze(0), as_tuple=False).squeeze(
+         -1
+     )  # shape: [num_non_zero]

@@ -1,0 +1,21 @@
+ctx-only anchor-leak A/B  —  2026-09-15T14:25:38+00:00
+
+5w (open_perfectblend_qwen3_4b_50k), 3 epochs, accum=12, single card.
+Only variable: --ctx-only-anchor-in-context (legacy) vs default (fix).
+
+run                                ep0       ep1       ep2      
+---                                ---       ---       ---      
+fix    (card 11, no leak)          2.7739 3.3633 3.6224 
+legacy (card 12, leaking)          3.3085 3.8206 4.0582 
+
+同一份 5w 的历史参照（老代码）:
+plain GQA accum12 (accum12)        2.8319 3.4090 3.6739 
+ctx-only leaky (gqa_ctx_l0_a12)    3.3050 3.8126 4.0541 
+
+读法:
+  legacy 应复现 gqa_ctx_l0_a12 的 ~4.05；复现不出则本框架与老代码不等价。
+  fix 若回落到 plain GQA (~3.67) 附近 -> 增益主要是泄漏。
+  fix 若明显高于 plain GQA -> 去掉 block 内自条件化本身也有部分真实收益。
+
+逐微步指标: /home/y50063564/processed_data/dspark_data/dspark_ctxonly_ab/{fix,legacy}/metrics/train_metrics.csv（需自行从日志抽取）
+原始日志  : /home/y50063564/processed_data/dspark_data/dspark_ctxonly_ab/{fix,legacy}/logs/

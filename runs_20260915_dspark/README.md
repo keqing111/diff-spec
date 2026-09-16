@@ -120,3 +120,36 @@ python3 scripts/ctx70w_vs_dp12.py
 > `train_attn_run.sh` 记录 git HEAD 与工作区 diff 之后。**70w 那组启动更早，没有留下代码快照**
 > （原始 run 目录里只有 `checkpoints/` 和 `logs/`），已在其 README 中写明。
 > 不要用当前工作区 diff 反推它启动时的代码状态：60 小时后加入的注意力三变体改动也在当前 diff 里。
+
+---
+
+## ⚠️ 后续更正（2026-09-16）：ctx-only 的结论已被推翻
+
+本目录里关于 ctx-only 的结论 —— `20260910-12_ctx_only_layer0_70w/` 那个对比
+（accept_len +0.35~0.40、6/6 测量点同号）—— **不成立**，请以本次更正为准。
+
+**原因**：ctx-only 掩码为了让每个 query 的可见集非空（避免 softmax 全 `-inf` 出 NaN），
+把可见 base 的上界从 `< anchor` 放宽成了 `<= anchor`，于是训练期 query 能 attend 到
+**anchor 位置自己的 K/V** —— 那是 verifier 在该 token 上的 hidden state。
+推理期不存在这份信息：draft 的 context K/V 只覆盖 target **已经处理过**的位置
+（`vllm/v1/spec_decode/utils.py`: query_pos = last_target_pos + 1 + offset），
+anchor/bonus 位置还没有 hidden state。所以这是训练期独有的信号泄漏。
+
+**对照实验**（同数据、同超参，唯一变量是一个开关；含内置的框架可信度验证）见同仓库
+**`runs_20260916_ctxonly_ab/`**：
+
+| run | ep0 | ep1 | ep2 |
+|---|---|---|---|
+| legacy（带泄漏） | 3.3085 | 3.8206 | **4.0582** |
+| fix（修复后） | 2.7739 | 3.3633 | **3.6224** |
+| plain GQA（历史参照） | 2.8319 | 3.4090 | 3.6739 |
+
+- `legacy` 复现了老代码的 4.0541（Δ=0.0041），**框架可信度验证通过**
+- 同会话 A/B：**去泄漏后增益完全消失，−0.4358**（是噪声的约 100 倍）
+- 修复版还略低于 plain GQA（−0.0515，3 个 epoch 一致）
+
+**影响范围**：本目录中受影响的只有 ctx-only 相关结论（包括 `diff-ctx-only @l0/@l3`）。
+三组注意力 MHA / 原生 GQA / MLA 的对比用的是 full attention、未开 ctx-only，**不受影响**；
+`--grad-accum` 的语义验证也不受影响。
+
+**本目录其余内容（逐微步指标、日志、脚本、config、diff）一律保持不变**，仅结论作废。
